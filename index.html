@@ -525,20 +525,36 @@
 
     const targetIdx = pickIndex();
     const sliceMid = cumAngleToSliceMid(targetIdx);
-    // Random offset within the slice so it doesn't always land exactly center
     const total = SLICES.reduce((s, a) => s + a.weight, 0);
     const sliceAngle = (SLICES[targetIdx].weight / total) * Math.PI * 2;
-    const jitter = (Math.random() - 0.5) * sliceAngle * 0.7;
+
+    // Slices arrive at the pointer in decreasing-cum order, so the slice
+    // immediately *after* the golden one (in arrival order) is the natural
+    // tease candidate — it can land just past the ice-cream boundary.
+    const goldenIdx = SLICES.findIndex(s => s.golden);
+    const teaseIdx = (goldenIdx - 1 + SLICES.length) % SLICES.length;
+    const isGolden = !!SLICES[targetIdx].golden;
+    const teasing = !isGolden && targetIdx === teaseIdx && Math.random() < 0.5;
+
+    let jitter;
+    if (teasing) {
+      // Land near the IceCream-adjacent edge of Movie so the wheel crawls
+      // through ice cream tick-by-tick right before settling.
+      jitter = sliceAngle * 0.45;
+    } else {
+      jitter = (Math.random() - 0.5) * sliceAngle * 0.7;
+    }
 
     const startRot = rotation;
     const desiredFinal = -(sliceMid + jitter);
-    const turns = 5 + Math.floor(Math.random() * 3);
+    const baseTurns = teasing ? 7 : 6;
+    const turns = baseTurns + Math.floor(Math.random() * 3);
     let targetRot = desiredFinal;
     while (targetRot - startRot < turns * Math.PI * 2) {
       targetRot += Math.PI * 2;
     }
 
-    const duration = 4500;
+    const duration = teasing ? 8500 : 6500;
     const t0 = performance.now();
     let lastIdx = currentSliceIndex();
 
@@ -600,7 +616,7 @@
       tapCount = 0;
       forceGolden = true;
       subtitle.classList.add('armed');
-      setTimeout(() => subtitle.classList.remove('armed'), 1000);
+      setTimeout(() => subtitle.classList.remove('armed'), 300);
     } else {
       tapTimer = setTimeout(() => { tapCount = 0; }, 1500);
     }
