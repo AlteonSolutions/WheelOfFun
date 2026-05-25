@@ -163,11 +163,25 @@
     background: rgba(255, 216, 77, 0.12);
     border-color: #fff5b8;
     box-shadow: 0 0 28px rgba(255, 216, 77, 0.4);
+    animation: celebrate-bg 0.6s ease-out;
   }
   .result.golden .result-text {
     color: #ffd84d;
     font-size: 36px;
     text-shadow: 0 0 14px rgba(255, 216, 77, 0.7);
+    animation: celebrate 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: inline-block;
+  }
+  @keyframes celebrate {
+    0%   { transform: scale(0.2) rotate(-12deg); opacity: 0; }
+    55%  { transform: scale(1.35) rotate(6deg);  opacity: 1; }
+    78%  { transform: scale(0.94) rotate(-3deg); }
+    100% { transform: scale(1) rotate(0);        opacity: 1; }
+  }
+  @keyframes celebrate-bg {
+    0%   { box-shadow: 0 0 0 rgba(255, 216, 77, 0); }
+    50%  { box-shadow: 0 0 60px rgba(255, 216, 77, 0.9); }
+    100% { box-shadow: 0 0 28px rgba(255, 216, 77, 0.4); }
   }
 
   @media (max-width: 600px) {
@@ -221,6 +235,7 @@
   let rotation = 0;
   let spinning = false;
   let forceGolden = false;
+  let spinCount = 0;
 
   // ---------- Outline icons ----------
   // Each draws centered at (0,0) in a local frame where -y points outward.
@@ -518,28 +533,36 @@
   function spin() {
     if (spinning) return;
     spinning = true;
+    spinCount += 1;
     document.getElementById('spinBtn').disabled = true;
     const resultEl = document.getElementById('result');
     resultEl.classList.remove('golden');
     resultEl.querySelector('.result-text').textContent = '…';
 
-    const targetIdx = pickIndex();
+    const goldenIdx = SLICES.findIndex(s => s.golden);
+    // Slice that arrives at pointer immediately *after* the golden one — its
+    // ice-cream-adjacent edge gives the natural "so close!" tease.
+    const teaseIdx = (goldenIdx - 1 + SLICES.length) % SLICES.length;
+
+    let targetIdx, teasing = false;
+    if (forceGolden) {
+      targetIdx = goldenIdx;
+      forceGolden = false;
+    } else if (spinCount % 2 === 0) {
+      // Every other spin is a tease: force the tease slice + edge bias.
+      targetIdx = teaseIdx;
+      teasing = true;
+    } else {
+      targetIdx = pickIndex();
+    }
+
     const sliceMid = cumAngleToSliceMid(targetIdx);
     const total = SLICES.reduce((s, a) => s + a.weight, 0);
     const sliceAngle = (SLICES[targetIdx].weight / total) * Math.PI * 2;
-
-    // Slices arrive at the pointer in decreasing-cum order, so the slice
-    // immediately *after* the golden one (in arrival order) is the natural
-    // tease candidate — it can land just past the ice-cream boundary.
-    const goldenIdx = SLICES.findIndex(s => s.golden);
-    const teaseIdx = (goldenIdx - 1 + SLICES.length) % SLICES.length;
     const isGolden = !!SLICES[targetIdx].golden;
-    const teasing = !isGolden && targetIdx === teaseIdx && Math.random() < 0.5;
 
     let jitter;
     if (teasing) {
-      // Land near the IceCream-adjacent edge of Movie so the wheel crawls
-      // through ice cream tick-by-tick right before settling.
       jitter = sliceAngle * 0.45;
     } else {
       jitter = (Math.random() - 0.5) * sliceAngle * 0.7;
@@ -580,6 +603,8 @@
     if (s.golden) {
       resultEl.classList.add('golden');
       resultEl.querySelector('.result-text').textContent = '★ ICE CREAM! ★';
+      launchConfetti();
+      celebrateSound();
     } else {
       resultEl.classList.remove('golden');
       resultEl.querySelector('.result-text').textContent = s.name;
@@ -605,6 +630,107 @@
     } catch (e) { /* ignore */ }
   }
 
+  // ---------- Celebration sound (ice cream win) ----------
+  function celebrateSound() {
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const now = audioCtx.currentTime;
+      const notes = [523.25, 659.25, 783.99, 1046.50]; // C5 E5 G5 C6
+      notes.forEach((freq, i) => {
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.type = 'triangle';
+        o.frequency.value = freq;
+        const start = now + i * 0.09;
+        g.gain.setValueAtTime(0.0001, start);
+        g.gain.exponentialRampToValueAtTime(0.18, start + 0.015);
+        g.gain.exponentialRampToValueAtTime(0.001, start + 0.45);
+        o.connect(g).connect(audioCtx.destination);
+        o.start(start);
+        o.stop(start + 0.5);
+      });
+    } catch (e) { /* ignore */ }
+  }
+
+  // ---------- Confetti ----------
+  const confettiCanvas = document.createElement('canvas');
+  confettiCanvas.style.cssText =
+    'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:100';
+  document.body.appendChild(confettiCanvas);
+  const cctx = confettiCanvas.getContext('2d');
+  function sizeConfetti() {
+    confettiCanvas.width = window.innerWidth;
+    confettiCanvas.height = window.innerHeight;
+  }
+  sizeConfetti();
+  window.addEventListener('resize', sizeConfetti);
+
+  let confettiParticles = [];
+  let confettiAnimating = false;
+  const CONFETTI_COLORS = [
+    '#ff5e7e', '#ffd84d', '#4dd4d4', '#7ab87a',
+    '#d97acc', '#ec7547', '#a36ad9', '#fff5b8'
+  ];
+
+  function launchConfetti() {
+    const wheelEl = document.querySelector('.wheel');
+    const r = wheelEl.getBoundingClientRect();
+    const cx = r.left + r.width / 2;
+    const cy = r.top + r.height / 2;
+    const N = 200;
+    for (let i = 0; i < N; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 4 + Math.random() * 11;
+      confettiParticles.push({
+        x: cx + (Math.random() - 0.5) * 30,
+        y: cy + (Math.random() - 0.5) * 30,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 6,
+        rot: Math.random() * Math.PI * 2,
+        vRot: (Math.random() - 0.5) * 0.35,
+        color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
+        w: 5 + Math.random() * 7,
+        h: 8 + Math.random() * 10,
+        alpha: 1,
+        life: 0
+      });
+    }
+    if (!confettiAnimating) {
+      confettiAnimating = true;
+      requestAnimationFrame(stepConfetti);
+    }
+  }
+
+  function stepConfetti() {
+    cctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+    for (let i = confettiParticles.length - 1; i >= 0; i--) {
+      const p = confettiParticles[i];
+      p.vy += 0.28;
+      p.vx *= 0.992;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rot += p.vRot;
+      p.life += 1;
+      if (p.life > 90) p.alpha -= 0.018;
+      if (p.alpha <= 0.04 || p.y > confettiCanvas.height + 60) {
+        confettiParticles.splice(i, 1);
+        continue;
+      }
+      cctx.save();
+      cctx.translate(p.x, p.y);
+      cctx.rotate(p.rot);
+      cctx.globalAlpha = Math.max(0, p.alpha);
+      cctx.fillStyle = p.color;
+      cctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      cctx.restore();
+    }
+    if (confettiParticles.length > 0) {
+      requestAnimationFrame(stepConfetti);
+    } else {
+      confettiAnimating = false;
+    }
+  }
+
   // ---------- Secret trigger: triple-tap the subtitle ----------
   const subtitle = document.getElementById('subtitle');
   let tapCount = 0;
@@ -616,7 +742,7 @@
       tapCount = 0;
       forceGolden = true;
       subtitle.classList.add('armed');
-      setTimeout(() => subtitle.classList.remove('armed'), 300);
+      setTimeout(() => subtitle.classList.remove('armed'), 150);
     } else {
       tapTimer = setTimeout(() => { tapCount = 0; }, 1500);
     }
