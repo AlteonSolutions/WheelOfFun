@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0d0907">
+<title>Wheel of Fun</title>
+<link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='30' fill='%23ffd84d' stroke='%234dd4d4' stroke-width='4'/><text x='32' y='44' font-size='38' text-anchor='middle' font-family='Arial Black,sans-serif' fill='%231a1410'>%E2%98%85</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='30' fill='%23ffd84d' stroke='%234dd4d4' stroke-width='4'/><text x='32' y='44' font-size='38' text-anchor='middle' font-family='Arial Black,sans-serif' fill='%231a1410'>%E2%98%85</text></svg>">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background:
+      radial-gradient(ellipse at top, #2a1f1a 0%, #0d0907 70%) fixed,
+      #0d0907;
+    color: #f4ead8;
+    font-family: 'Impact', 'Anton', 'Bebas Neue', 'Arial Black', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+    padding-bottom: 24px;
+  }
+
+  /* dashed yellow road-line decoration top + bottom */
+  body::before, body::after {
+    content: '';
+    position: fixed;
+    left: 0; right: 0;
+    height: 6px;
+    background: repeating-linear-gradient(
+      90deg,
+      #ffd84d 0 36px,
+      transparent 36px 72px
+    );
+    opacity: 0.55;
+    z-index: 0;
+    pointer-events: none;
+  }
+  body::before { top: 0; }
+  body::after { bottom: 0; }
+
+  header {
+    text-align: center;
+    padding: 26px 16px 6px;
+    position: relative;
+    z-index: 1;
+  }
+  .title {
+    display: inline-block;
+    margin: 0;
+    font-size: 56px;
+    letter-spacing: 5px;
+    color: #ff5e7e;
+    text-shadow:
+      0 0 6px #ff5e7e,
+      0 0 14px #ff5e7e,
+      0 0 28px rgba(255, 94, 126, 0.55),
+      3px 3px 0 #1a0e0a;
+    transform: skewX(-6deg);
+  }
+  .subtitle {
+    color: #4dd4d4;
+    text-shadow: 0 0 8px #4dd4d4, 0 0 16px rgba(77, 212, 212, 0.5);
+    font-size: 14px;
+    letter-spacing: 6px;
+    margin-top: 6px;
+  }
+
+  nav.tabs {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 8px 2px;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+  }
+  .tab {
+    background: #1a1410;
+    color: #f4ead8;
+    border: 2px solid #4dd4d4;
+    border-radius: 4px;
+    padding: 10px 18px;
+    font-family: inherit;
+    font-size: 16px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+  .tab.active {
+    background: #4dd4d4;
+    color: #0d0907;
+    box-shadow: 0 0 12px rgba(77, 212, 212, 0.7);
+  }
+
+  .view { display: none; padding: 14px; max-width: 900px; margin: 0 auto; position: relative; z-index: 1; }
+  .view.active { display: block; }
+
+  /* Wheel */
+  .wheel-wrap {
+    position: relative;
+    width: 90vw;
+    max-width: 480px;
+    margin: 4px auto 14px;
+  }
+  .wheel-wrap::after {
+    content: '';
+    display: block;
+    padding-bottom: 100%;
+  }
+  canvas.wheel {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .pointer {
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    margin-left: -18px;
+    width: 0; height: 0;
+    border-left: 18px solid transparent;
+    border-right: 18px solid transparent;
+    border-top: 34px solid #ff5e7e;
+    filter: drop-shadow(0 0 6px #ff5e7e);
+    z-index: 2;
+  }
+
+  .controls { text-align: center; }
+  .spin-btn {
+    background: linear-gradient(180deg, #ff5e7e 0%, #cc3a5e 100%);
+    color: #fff;
+    border: 3px solid #ffd84d;
+    border-radius: 50px;
+    padding: 18px 56px;
+    font-family: inherit;
+    font-size: 30px;
+    letter-spacing: 6px;
+    cursor: pointer;
+    box-shadow:
+      0 0 24px rgba(255, 94, 126, 0.55),
+      inset 0 -4px 0 rgba(0,0,0,0.3);
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.4);
+  }
+  .spin-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .spin-btn:active:not(:disabled) { transform: translateY(2px); }
+  .spin-btn.armed {
+    background: linear-gradient(180deg, #ffd84d 0%, #b8902a 100%);
+    color: #1a1410;
+    text-shadow: 1px 1px 0 rgba(255,255,255,0.4);
+    box-shadow: 0 0 28px rgba(255, 216, 77, 0.85), inset 0 -4px 0 rgba(0,0,0,0.3);
+  }
+
+  .tokens {
+    margin: 14px 0 4px;
+    min-height: 30px;
+    text-align: center;
+  }
+  .tokens-label {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: #ffd84d;
+    margin-bottom: 6px;
+  }
+  .token {
+    display: inline-block;
+    width: 42px; height: 42px;
+    margin: 2px;
+    background: radial-gradient(circle at 30% 30%, #fff5b8, #ffd84d 60%, #b8902a 100%);
+    border: 2px solid #b8902a;
+    border-radius: 50%;
+    color: #5a4515;
+    line-height: 38px;
+    text-align: center;
+    font-size: 22px;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(255, 216, 77, 0.55);
+    font-family: inherit;
+    padding: 0;
+  }
+  .token.armed {
+    box-shadow: 0 0 16px #fff, 0 0 28px #ffd84d;
+    animation: pulse 1s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+
+  .result {
+    margin: 14px auto 0;
+    max-width: 520px;
+    padding: 14px 18px;
+    background: rgba(255, 216, 77, 0.07);
+    border: 2px dashed #ffd84d;
+    border-radius: 8px;
+    text-align: center;
+    min-height: 64px;
+  }
+  .result-label {
+    font-size: 13px;
+    letter-spacing: 4px;
+    color: #ffd84d;
+    margin-bottom: 6px;
+  }
+  .result-text {
+    font-size: 22px;
+    color: #f4ead8;
+    letter-spacing: 1px;
+    line-height: 1.25;
+  }
+  .result.golden .result-text {
+    color: #ffd84d;
+    text-shadow: 0 0 12px rgba(255, 216, 77, 0.7);
+  }
+
+  /* Edit list */
+  .activity-list { list-style: none; padding: 0; margin: 0; }
+  .activity {
+    background: #1a1410;
+    border: 2px solid #4dd4d4;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 10px;
+    display: grid;
+    grid-template-columns: 12px 1fr auto;
+    column-gap: 12px;
+    row-gap: 8px;
+    align-items: center;
+  }
+  .activity.golden {
+    border-color: #ffd84d;
+    background: rgba(255, 216, 77, 0.06);
+  }
+  .activity .swatch {
+    width: 12px;
+    height: 100%;
+    min-height: 60px;
+    border-radius: 3px;
+    grid-row: 1 / span 2;
+  }
+  .name-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #4dd4d4;
+    color: #f4ead8;
+    font-family: inherit;
+    font-size: 18px;
+    padding: 4px 2px;
+    width: 100%;
+    letter-spacing: 1px;
+  }
+  .name-input:focus { outline: none; border-bottom-color: #ff5e7e; }
+  .weight-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    grid-column: 2;
+  }
+  .weight-row label {
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: #4dd4d4;
+    min-width: 60px;
+  }
+  .weight-row input[type="range"] { flex: 1; min-width: 80px; }
+  .weight-val {
+    color: #ffd84d;
+    min-width: 24px;
+    text-align: right;
+    font-size: 18px;
+  }
+  .delete-btn {
+    background: transparent;
+    border: 2px solid #ff5e7e;
+    color: #ff5e7e;
+    border-radius: 4px;
+    padding: 8px 10px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12px;
+    letter-spacing: 1px;
+    grid-row: 1 / span 2;
+    grid-column: 3;
+  }
+
+  .add-btn, .reset-btn, .secondary-btn {
+    background: transparent;
+    border: 2px solid #ffd84d;
+    color: #ffd84d;
+    border-radius: 4px;
+    padding: 12px 22px;
+    font-family: inherit;
+    font-size: 16px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    margin: 6px 4px;
+  }
+  .reset-btn { border-color: #ff5e7e; color: #ff5e7e; }
+  .secondary-btn { border-color: #4dd4d4; color: #4dd4d4; }
+
+  .history-list { list-style: none; padding: 0; margin: 0; }
+  .history-item {
+    border-left: 4px solid #4dd4d4;
+    padding: 8px 12px;
+    margin-bottom: 4px;
+    background: rgba(77, 212, 212, 0.05);
+    border-radius: 0 4px 4px 0;
+  }
+  .history-item.golden {
+    border-left-color: #ffd84d;
+    background: rgba(255, 216, 77, 0.07);
+  }
+  .history-time { font-size: 12px; color: #4dd4d4; letter-spacing: 1px; }
+  .history-name { font-size: 18px; }
+  .empty {
+    text-align: center;
+    opacity: 0.55;
+    padding: 28px 12px;
+    font-size: 16px;
+    letter-spacing: 2px;
+  }
+
+  @media (max-width: 600px) {
+    .title { font-size: 38px; letter-spacing: 3px; }
+    .subtitle { letter-spacing: 4px; font-size: 12px; }
+    .spin-btn { font-size: 24px; padding: 14px 40px; letter-spacing: 4px; }
+    .tab { padding: 8px 14px; font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1 class="title">WHEEL OF FUN</h1>
+  <div class="subtitle">&#9733; ROAD TRIP EDITION &#9733;</div>
+</header>
+
+<nav class="tabs">
+  <button class="tab active" data-view="spin">SPIN</button>
+  <button class="tab" data-view="edit">EDIT WHEEL</button>
+  <button class="tab" data-view="history">HISTORY</button>
+</nav>
+
+<section class="view active" id="view-spin">
+  <div class="wheel-wrap">
+    <div class="pointer"></div>
+    <canvas class="wheel" width="600" height="600"></canvas>
+  </div>
+  <div class="tokens" id="tokens"></div>
+  <div class="controls">
+    <button class="spin-btn" id="spinBtn">SPIN</button>
+  </div>
+  <div class="result" id="result">
+    <div class="result-label">&#9733; YOUR FUN &#9733;</div>
+    <div class="result-text">Tap SPIN to start</div>
+  </div>
+</section>
+
+<section class="view" id="view-edit">
+  <ul class="activity-list" id="activityList"></ul>
+  <div style="text-align:center; margin-top:14px;">
+    <button class="add-btn" id="addBtn">+ ADD ACTIVITY</button>
+    <button class="secondary-btn" id="addGoldenBtn">+ GOLDEN TICKET</button>
+    <button class="reset-btn" id="resetBtn">RESET TO DEFAULTS</button>
+  </div>
+</section>
+
+<section class="view" id="view-history">
+  <ul class="history-list" id="historyList"></ul>
+  <div style="text-align:center; margin-top:10px;">
+    <button class="reset-btn" id="clearHistoryBtn">CLEAR HISTORY</button>
+  </div>
+</section>
+
+<script>
+(function () {
+  'use strict';
+
+  // ---------- Defaults ----------
+  const DEFAULTS = [
+    { name: "Pick the next podcast",                 weight: 5 },
+    { name: "Gas station snack of your choice",      weight: 7 },
+    { name: "15 min TV time at next stop",           weight: 4 },
+    { name: "Scenic detour - find one in 10 min",    weight: 3 },
+    { name: "Photo stop at next exit",               weight: 4 },
+    { name: "Fancy drink at next gas station",       weight: 6 },
+    { name: "Windows down, one song full volume",    weight: 5 },
+    { name: "Mystery snack - try something new",     weight: 5 },
+    { name: "Local landmark detour",                 weight: 2 },
+    { name: "Ice cream stop next opportunity",       weight: 4 },
+    { name: "Backseat DJ for 30 min",                weight: 5 },
+    { name: "Driver picks next meal stop",           weight: 4 },
+    { name: "Trivia round - winner gets next snack", weight: 3 },
+    { name: "Audiobook or comedy track",             weight: 4 },
+    { name: "5 min stretch + walk at next exit",     weight: 5 },
+    { name: "Souvenir hunt at next stop",            weight: 3 },
+    { name: "Restaurant roulette next meal",         weight: 3 },
+    { name: "Sing-along road trip anthem",           weight: 5 },
+    { name: "GOLDEN TICKET",                         weight: 2, golden: true }
+  ];
+
+  const PALETTE = [
+    "#d94f4f", "#e8a83d", "#4dd4d4", "#7ab87a",
+    "#d97acc", "#ec7547", "#5b9bd5", "#c97c5d",
+    "#a36ad9", "#69b369"
+  ];
+
+  // ---------- State ----------
+  const STORAGE_KEY = 'wheelOfFun.v1';
+  let state = { activities: [], tokens: 0, history: [], nextId: 1 };
+
+  function load() {
+    let firstRun = true;
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        state = JSON.parse(raw);
+        firstRun = false;
+      }
+    } catch (e) { /* ignore */ }
+    if (firstRun || !Array.isArray(state.activities)) {
+      state.activities = DEFAULTS.map((d, i) => Object.assign({ id: i + 1 }, d));
+      state.nextId = DEFAULTS.length + 1;
+    }
+    if (typeof state.tokens !== 'number') state.tokens = 0;
+    if (!Array.isArray(state.history)) state.history = [];
+    if (typeof state.nextId !== 'number') {
+      const ids = state.activities.map(a => a.id || 0);
+      state.nextId = (ids.length ? Math.max.apply(null, ids) : 0) + 1;
+    }
+  }
+
+  function save() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+    catch (e) { /* ignore */ }
+  }
+
+  function colorFor(activity, idx) {
+    if (activity.golden) return '#ffd84d';
+    // Stable across reorder/delete: hash on id.
+    return PALETTE[(activity.id || idx) % PALETTE.length];
+  }
+
+  // ---------- Wheel rendering ----------
+  const canvas = document.querySelector('.wheel');
+  const ctx = canvas.getContext('2d');
+  let rotation = 0;
+
+  function drawWheel() {
+    const W = canvas.width, H = canvas.height;
+    const cx = W / 2, cy = H / 2;
+    const R = Math.min(W, H) / 2 - 14;
+
+    ctx.clearRect(0, 0, W, H);
+
+    const acts = state.activities;
+    if (acts.length === 0) {
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.beginPath();
+      ctx.arc(0, 0, R, 0, Math.PI * 2);
+      ctx.fillStyle = '#1a1410';
+      ctx.fill();
+      ctx.strokeStyle = '#4dd4d4';
+      ctx.lineWidth = 6;
+      ctx.stroke();
+      ctx.fillStyle = '#f4ead8';
+      ctx.font = 'bold 28px Impact, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('ADD ACTIVITIES', 0, -10);
+      ctx.fillText('TO BEGIN', 0, 26);
+      ctx.restore();
+      return;
+    }
+
+    const total = acts.reduce((s, a) => s + Math.max(1, a.weight || 1), 0);
+
+    // Rotating slices
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(rotation);
+
+    let start = -Math.PI / 2;
+    acts.forEach((a, i) => {
+      const sliceAngle = (Math.max(1, a.weight || 1) / total) * Math.PI * 2;
+      const end = start + sliceAngle;
+
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.arc(0, 0, R, start, end);
+      ctx.closePath();
+
+      if (a.golden) {
+        const grad = ctx.createRadialGradient(0, 0, R * 0.15, 0, 0, R);
+        grad.addColorStop(0, '#fff5b8');
+        grad.addColorStop(0.55, '#ffd84d');
+        grad.addColorStop(1, '#b8902a');
+        ctx.fillStyle = grad;
+      } else {
+        ctx.fillStyle = colorFor(a, i);
+      }
+      ctx.fill();
+
+      ctx.strokeStyle = '#1a1410';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      // Slice label (radial)
+      ctx.save();
+      const mid = start + sliceAngle / 2;
+      ctx.rotate(mid);
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = a.golden ? '#5a4515' : '#1a1410';
+      const fontSize = Math.max(11, Math.min(20, sliceAngle * 34));
+      ctx.font = 'bold ' + fontSize + 'px Impact, Anton, sans-serif';
+      const maxChars = Math.max(8, Math.floor(R / 9));
+      const text = a.name || '';
+      const display = text.length > maxChars ? text.slice(0, maxChars - 1) + '…' : text;
+      ctx.fillText(display, R - 16, 0);
+      ctx.restore();
+
+      start = end;
+    });
+
+    ctx.restore();
+
+    // Static outer rings (chrome + dashed road line)
+    ctx.save();
+    ctx.translate(cx, cy);
+
+    ctx.beginPath();
+    ctx.arc(0, 0, R, 0, Math.PI * 2);
+    ctx.strokeStyle = '#4dd4d4';
+    ctx.lineWidth = 8;
+    ctx.shadowColor = '#4dd4d4';
+    ctx.shadowBlur = 14;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    ctx.beginPath();
+    ctx.arc(0, 0, R + 11, 0, Math.PI * 2);
+    ctx.setLineDash([14, 10]);
+    ctx.strokeStyle = '#ffd84d';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Center hub badge
+    ctx.beginPath();
+    ctx.arc(0, 0, 42, 0, Math.PI * 2);
+    const hubGrad = ctx.createRadialGradient(0, 0, 4, 0, 0, 42);
+    hubGrad.addColorStop(0, '#ffd84d');
+    hubGrad.addColorStop(1, '#b8902a');
+    ctx.fillStyle = hubGrad;
+    ctx.fill();
+    ctx.strokeStyle = '#1a1410';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    ctx.fillStyle = '#1a1410';
+    ctx.font = 'bold 36px Impact, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('★', 0, 3);
+
+    ctx.restore();
+  }
+
+  // ---------- Spin physics ----------
+  let spinning = false;
+  let useToken = false;
+
+  function pickActivityIndex() {
+    const acts = state.activities;
+    const total = acts.reduce((s, a) => s + Math.max(1, a.weight || 1), 0);
+    let roll = Math.random() * total;
+    for (let i = 0; i < acts.length; i++) {
+      roll -= Math.max(1, acts[i].weight || 1);
+      if (roll <= 0) return i;
+    }
+    return acts.length - 1;
+  }
+
+  function cumAngleToSliceMid(targetIdx) {
+    const acts = state.activities;
+    const total = acts.reduce((s, a) => s + Math.max(1, a.weight || 1), 0);
+    let cum = 0;
+    for (let i = 0; i < acts.length; i++) {
+      const slice = (Math.max(1, acts[i].weight || 1) / total) * Math.PI * 2;
+      if (i === targetIdx) return cum + slice / 2;
+      cum += slice;
+    }
+    return 0;
+  }
+
+  function currentSliceIndex() {
+    const acts = state.activities;
+    if (!acts.length) return -1;
+    const total = acts.reduce((s, a) => s + Math.max(1, a.weight || 1), 0);
+    // Pointer is fixed at top. In wheel local frame, pointer angle = -π/2 - rotation.
+    // Slice 0 starts at -π/2, so distance into wheel = -rotation (mod 2π).
+    let p = (-rotation) % (Math.PI * 2);
+    while (p < 0) p += Math.PI * 2;
+    let cum = 0;
+    for (let i = 0; i < acts.length; i++) {
+      const slice = (Math.max(1, acts[i].weight || 1) / total) * Math.PI * 2;
+      cum += slice;
+      if (p < cum) return i;
+    }
+    return acts.length - 1;
+  }
+
+  function spin() {
+    if (spinning || state.activities.length === 0) return;
+    spinning = true;
+    document.getElementById('spinBtn').disabled = true;
+    const resultEl = document.getElementById('result');
+    resultEl.classList.remove('golden');
+    resultEl.querySelector('.result-text').textContent = '…';
+
+    const targetIdx = pickActivityIndex();
+    const sliceMid = cumAngleToSliceMid(targetIdx); // distance from slice-0 start
+    const turns = 5 + Math.floor(Math.random() * 3); // 5-7 full turns
+
+    // Land slice mid at pointer (top): rotation such that p = -rotation mod 2π == sliceMid
+    // => rotation = -sliceMid (mod 2π). Add full turns for animation length.
+    const startRot = rotation;
+    const desiredFinal = -sliceMid;
+    // Normalize so target > start by at least `turns` rotations.
+    let targetRot = desiredFinal;
+    while (targetRot - startRot < turns * Math.PI * 2) {
+      targetRot += Math.PI * 2;
+    }
+
+    const duration = 4500;
+    const t0 = performance.now();
+    let lastIdx = currentSliceIndex();
+
+    function ease(t) { return 1 - Math.pow(1 - t, 3); }
+
+    function frame(now) {
+      const t = Math.min(1, (now - t0) / duration);
+      rotation = startRot + (targetRot - startRot) * ease(t);
+      drawWheel();
+
+      const cur = currentSliceIndex();
+      if (cur !== lastIdx) {
+        tick();
+        lastIdx = cur;
+      }
+
+      if (t < 1) {
+        requestAnimationFrame(frame);
+      } else {
+        rotation = targetRot;
+        drawWheel();
+        finishSpin(targetIdx);
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function finishSpin(idx) {
+    const a = state.activities[idx];
+    spinning = false;
+    document.getElementById('spinBtn').disabled = false;
+
+    if (useToken) {
+      state.tokens = Math.max(0, state.tokens - 1);
+      useToken = false;
+    }
+
+    const resultEl = document.getElementById('result');
+    if (a.golden) {
+      state.tokens += 1;
+      resultEl.classList.add('golden');
+      resultEl.querySelector('.result-text').textContent =
+        '★ GOLDEN TICKET! +1 re-spin token ★';
+    } else {
+      resultEl.classList.remove('golden');
+      resultEl.querySelector('.result-text').textContent = a.name;
+    }
+
+    state.history.unshift({ ts: Date.now(), name: a.name, golden: !!a.golden });
+    state.history = state.history.slice(0, 200);
+    save();
+    renderTokens();
+    if (document.getElementById('view-history').classList.contains('active')) renderHistory();
+  }
+
+  // ---------- Tick click (WebAudio) ----------
+  let audioCtx = null;
+  function tick() {
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.frequency.value = 1500;
+      o.type = 'square';
+      const now = audioCtx.currentTime;
+      g.gain.setValueAtTime(0.0001, now);
+      g.gain.exponentialRampToValueAtTime(0.05, now + 0.004);
+      g.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
+      o.connect(g).connect(audioCtx.destination);
+      o.start(now);
+      o.stop(now + 0.06);
+    } catch (e) { /* ignore */ }
+  }
+
+  // ---------- Tokens UI ----------
+  function renderTokens() {
+    const el = document.getElementById('tokens');
+    const btn = document.getElementById('spinBtn');
+    el.innerHTML = '';
+    btn.classList.toggle('armed', useToken && state.tokens > 0);
+    btn.textContent = (useToken && state.tokens > 0) ? 'RE-SPIN' : 'SPIN';
+
+    if (state.tokens > 0) {
+      const label = document.createElement('span');
+      label.className = 'tokens-label';
+      label.textContent = '★ GOLDEN TICKETS (' + state.tokens + ') — TAP TO ARM A RE-SPIN ★';
+      el.appendChild(label);
+      const wrap = document.createElement('div');
+      for (let i = 0; i < Math.min(state.tokens, 10); i++) {
+        const t = document.createElement('button');
+        t.className = 'token' + (useToken && i === 0 ? ' armed' : '');
+        t.textContent = '★';
+        t.addEventListener('click', () => {
+          useToken = !useToken;
+          renderTokens();
+        });
+        wrap.appendChild(t);
+      }
+      if (state.tokens > 10) {
+        const more = document.createElement('span');
+        more.style.color = '#ffd84d';
+        more.style.marginLeft = '6px';
+        more.textContent = '+' + (state.tokens - 10);
+        wrap.appendChild(more);
+      }
+      el.appendChild(wrap);
+    }
+  }
+
+  // ---------- Edit view ----------
+  function escapeAttr(s) {
+    return String(s).replace(/[&<>"']/g, c => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+  }
+
+  function renderActivities() {
+    const list = document.getElementById('activityList');
+    list.innerHTML = '';
+    if (state.activities.length === 0) {
+      list.innerHTML = '<li class="empty">No activities yet. Tap +ADD ACTIVITY to start.</li>';
+      return;
+    }
+    state.activities.forEach((a, i) => {
+      const li = document.createElement('li');
+      li.className = 'activity' + (a.golden ? ' golden' : '');
+      const color = colorFor(a, i);
+      li.innerHTML =
+        '<div class="swatch" style="background:' + color + '"></div>' +
+        '<input type="text" class="name-input" value="' + escapeAttr(a.name) + '" />' +
+        '<button class="delete-btn">DELETE</button>' +
+        '<div class="weight-row">' +
+          '<label>WEIGHT</label>' +
+          '<input type="range" min="1" max="10" value="' + a.weight + '" />' +
+          '<span class="weight-val">' + a.weight + '</span>' +
+        '</div>';
+
+      const nameInput = li.querySelector('.name-input');
+      const range = li.querySelector('input[type="range"]');
+      const wval = li.querySelector('.weight-val');
+      const del = li.querySelector('.delete-btn');
+
+      nameInput.addEventListener('input', e => {
+        a.name = e.target.value;
+        save();
+        drawWheel();
+      });
+      range.addEventListener('input', e => {
+        a.weight = parseInt(e.target.value, 10) || 1;
+        wval.textContent = a.weight;
+        save();
+        drawWheel();
+      });
+      del.addEventListener('click', () => {
+        if (confirm('Delete "' + a.name + '"?')) {
+          state.activities.splice(i, 1);
+          save();
+          renderActivities();
+          drawWheel();
+        }
+      });
+
+      list.appendChild(li);
+    });
+  }
+
+  document.getElementById('addBtn').addEventListener('click', () => {
+    state.activities.push({ id: state.nextId++, name: 'New fun thing', weight: 5 });
+    save();
+    renderActivities();
+    drawWheel();
+  });
+
+  document.getElementById('addGoldenBtn').addEventListener('click', () => {
+    state.activities.push({ id: state.nextId++, name: 'GOLDEN TICKET', weight: 2, golden: true });
+    save();
+    renderActivities();
+    drawWheel();
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    if (confirm('Reset all activities to defaults? Tokens and history are kept.')) {
+      state.activities = DEFAULTS.map((d, i) => Object.assign({ id: i + 1 }, d));
+      state.nextId = DEFAULTS.length + 1;
+      save();
+      renderActivities();
+      drawWheel();
+    }
+  });
+
+  // ---------- History ----------
+  function renderHistory() {
+    const list = document.getElementById('historyList');
+    list.innerHTML = '';
+    if (state.history.length === 0) {
+      list.innerHTML = '<li class="empty">No spins yet. Hit SPIN to start.</li>';
+      return;
+    }
+    state.history.forEach(h => {
+      const li = document.createElement('li');
+      li.className = 'history-item' + (h.golden ? ' golden' : '');
+      const d = new Date(h.ts);
+      li.innerHTML =
+        '<div class="history-time">' + d.toLocaleString() + '</div>' +
+        '<div class="history-name">' + escapeAttr(h.name) + '</div>';
+      list.appendChild(li);
+    });
+  }
+
+  document.getElementById('clearHistoryBtn').addEventListener('click', () => {
+    if (confirm('Clear all spin history?')) {
+      state.history = [];
+      save();
+      renderHistory();
+    }
+  });
+
+  // ---------- Tabs ----------
+  document.querySelectorAll('.tab').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+      document.querySelectorAll('.view').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      const view = t.dataset.view;
+      document.getElementById('view-' + view).classList.add('active');
+      if (view === 'edit') renderActivities();
+      if (view === 'history') renderHistory();
+    });
+  });
+
+  document.getElementById('spinBtn').addEventListener('click', spin);
+
+  // ---------- Init ----------
+  load();
+  drawWheel();
+  renderTokens();
+})();
+</script>
+</body>
+</html>
