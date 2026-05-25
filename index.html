@@ -479,13 +479,16 @@
       forceGolden = false;
       return i;
     }
-    const total = SLICES.reduce((s, a) => s + a.weight, 0);
+    // Golden slices are never picked at random — only via secret trigger.
+    const pool = [];
+    SLICES.forEach((s, i) => { if (!s.golden) pool.push(i); });
+    const total = pool.reduce((sum, i) => sum + SLICES[i].weight, 0);
     let roll = Math.random() * total;
-    for (let i = 0; i < SLICES.length; i++) {
-      roll -= SLICES[i].weight;
-      if (roll <= 0) return i;
+    for (let k = 0; k < pool.length; k++) {
+      roll -= SLICES[pool[k]].weight;
+      if (roll <= 0) return pool[k];
     }
-    return SLICES.length - 1;
+    return pool[pool.length - 1];
   }
 
   function cumAngleToSliceMid(targetIdx) {
