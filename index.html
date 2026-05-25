@@ -27,7 +27,6 @@
     padding-bottom: 24px;
   }
 
-  /* dashed yellow road-line decoration top + bottom */
   body::before, body::after {
     content: '';
     position: fixed;
@@ -70,44 +69,29 @@
     font-size: 14px;
     letter-spacing: 6px;
     margin-top: 6px;
+    cursor: pointer;
+    display: inline-block;
+    padding: 6px 10px;
+    transition: color 0.2s, text-shadow 0.2s;
+  }
+  .subtitle.armed {
+    color: #ffd84d;
+    text-shadow: 0 0 10px #ffd84d, 0 0 22px #ffd84d, 0 0 36px rgba(255, 216, 77, 0.6);
   }
 
-  nav.tabs {
-    display: flex;
-    justify-content: center;
-    gap: 6px;
-    padding: 10px 8px 2px;
-    flex-wrap: wrap;
+  main {
+    padding: 8px 14px;
+    max-width: 900px;
+    margin: 0 auto;
     position: relative;
     z-index: 1;
   }
-  .tab {
-    background: #1a1410;
-    color: #f4ead8;
-    border: 2px solid #4dd4d4;
-    border-radius: 4px;
-    padding: 10px 18px;
-    font-family: inherit;
-    font-size: 16px;
-    letter-spacing: 2px;
-    cursor: pointer;
-    text-transform: uppercase;
-  }
-  .tab.active {
-    background: #4dd4d4;
-    color: #0d0907;
-    box-shadow: 0 0 12px rgba(77, 212, 212, 0.7);
-  }
 
-  .view { display: none; padding: 14px; max-width: 900px; margin: 0 auto; position: relative; z-index: 1; }
-  .view.active { display: block; }
-
-  /* Wheel */
   .wheel-wrap {
     position: relative;
-    width: 90vw;
-    max-width: 480px;
-    margin: 4px auto 14px;
+    width: 92vw;
+    max-width: 520px;
+    margin: 6px auto 18px;
   }
   .wheel-wrap::after {
     content: '';
@@ -125,12 +109,12 @@
     position: absolute;
     top: -6px;
     left: 50%;
-    margin-left: -18px;
+    margin-left: -20px;
     width: 0; height: 0;
-    border-left: 18px solid transparent;
-    border-right: 18px solid transparent;
-    border-top: 34px solid #ff5e7e;
-    filter: drop-shadow(0 0 6px #ff5e7e);
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-top: 38px solid #ff5e7e;
+    filter: drop-shadow(0 0 8px #ff5e7e);
     z-index: 2;
   }
 
@@ -140,71 +124,28 @@
     color: #fff;
     border: 3px solid #ffd84d;
     border-radius: 50px;
-    padding: 18px 56px;
+    padding: 20px 64px;
     font-family: inherit;
-    font-size: 30px;
-    letter-spacing: 6px;
+    font-size: 34px;
+    letter-spacing: 8px;
     cursor: pointer;
     box-shadow:
-      0 0 24px rgba(255, 94, 126, 0.55),
+      0 0 28px rgba(255, 94, 126, 0.6),
       inset 0 -4px 0 rgba(0,0,0,0.3);
     text-shadow: 2px 2px 0 rgba(0,0,0,0.4);
   }
   .spin-btn:disabled { opacity: 0.45; cursor: not-allowed; }
   .spin-btn:active:not(:disabled) { transform: translateY(2px); }
-  .spin-btn.armed {
-    background: linear-gradient(180deg, #ffd84d 0%, #b8902a 100%);
-    color: #1a1410;
-    text-shadow: 1px 1px 0 rgba(255,255,255,0.4);
-    box-shadow: 0 0 28px rgba(255, 216, 77, 0.85), inset 0 -4px 0 rgba(0,0,0,0.3);
-  }
-
-  .tokens {
-    margin: 14px 0 4px;
-    min-height: 30px;
-    text-align: center;
-  }
-  .tokens-label {
-    display: block;
-    font-size: 11px;
-    letter-spacing: 3px;
-    color: #ffd84d;
-    margin-bottom: 6px;
-  }
-  .token {
-    display: inline-block;
-    width: 42px; height: 42px;
-    margin: 2px;
-    background: radial-gradient(circle at 30% 30%, #fff5b8, #ffd84d 60%, #b8902a 100%);
-    border: 2px solid #b8902a;
-    border-radius: 50%;
-    color: #5a4515;
-    line-height: 38px;
-    text-align: center;
-    font-size: 22px;
-    cursor: pointer;
-    box-shadow: 0 0 10px rgba(255, 216, 77, 0.55);
-    font-family: inherit;
-    padding: 0;
-  }
-  .token.armed {
-    box-shadow: 0 0 16px #fff, 0 0 28px #ffd84d;
-    animation: pulse 1s infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-  }
 
   .result {
-    margin: 14px auto 0;
+    margin: 18px auto 0;
     max-width: 520px;
-    padding: 14px 18px;
+    padding: 16px 18px;
     background: rgba(255, 216, 77, 0.07);
     border: 2px dashed #ffd84d;
     border-radius: 8px;
     text-align: center;
-    min-height: 64px;
+    min-height: 72px;
   }
   .result-label {
     font-size: 13px;
@@ -213,128 +154,28 @@
     margin-bottom: 6px;
   }
   .result-text {
-    font-size: 22px;
+    font-size: 28px;
     color: #f4ead8;
-    letter-spacing: 1px;
-    line-height: 1.25;
+    letter-spacing: 2px;
+    line-height: 1.2;
+  }
+  .result.golden {
+    background: rgba(255, 216, 77, 0.12);
+    border-color: #fff5b8;
+    box-shadow: 0 0 28px rgba(255, 216, 77, 0.4);
   }
   .result.golden .result-text {
     color: #ffd84d;
-    text-shadow: 0 0 12px rgba(255, 216, 77, 0.7);
-  }
-
-  /* Edit list */
-  .activity-list { list-style: none; padding: 0; margin: 0; }
-  .activity {
-    background: #1a1410;
-    border: 2px solid #4dd4d4;
-    border-radius: 6px;
-    padding: 12px;
-    margin-bottom: 10px;
-    display: grid;
-    grid-template-columns: 12px 1fr auto;
-    column-gap: 12px;
-    row-gap: 8px;
-    align-items: center;
-  }
-  .activity.golden {
-    border-color: #ffd84d;
-    background: rgba(255, 216, 77, 0.06);
-  }
-  .activity .swatch {
-    width: 12px;
-    height: 100%;
-    min-height: 60px;
-    border-radius: 3px;
-    grid-row: 1 / span 2;
-  }
-  .name-input {
-    background: transparent;
-    border: none;
-    border-bottom: 1px solid #4dd4d4;
-    color: #f4ead8;
-    font-family: inherit;
-    font-size: 18px;
-    padding: 4px 2px;
-    width: 100%;
-    letter-spacing: 1px;
-  }
-  .name-input:focus { outline: none; border-bottom-color: #ff5e7e; }
-  .weight-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    grid-column: 2;
-  }
-  .weight-row label {
-    font-size: 12px;
-    letter-spacing: 2px;
-    color: #4dd4d4;
-    min-width: 60px;
-  }
-  .weight-row input[type="range"] { flex: 1; min-width: 80px; }
-  .weight-val {
-    color: #ffd84d;
-    min-width: 24px;
-    text-align: right;
-    font-size: 18px;
-  }
-  .delete-btn {
-    background: transparent;
-    border: 2px solid #ff5e7e;
-    color: #ff5e7e;
-    border-radius: 4px;
-    padding: 8px 10px;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: 12px;
-    letter-spacing: 1px;
-    grid-row: 1 / span 2;
-    grid-column: 3;
-  }
-
-  .add-btn, .reset-btn, .secondary-btn {
-    background: transparent;
-    border: 2px solid #ffd84d;
-    color: #ffd84d;
-    border-radius: 4px;
-    padding: 12px 22px;
-    font-family: inherit;
-    font-size: 16px;
-    letter-spacing: 2px;
-    cursor: pointer;
-    margin: 6px 4px;
-  }
-  .reset-btn { border-color: #ff5e7e; color: #ff5e7e; }
-  .secondary-btn { border-color: #4dd4d4; color: #4dd4d4; }
-
-  .history-list { list-style: none; padding: 0; margin: 0; }
-  .history-item {
-    border-left: 4px solid #4dd4d4;
-    padding: 8px 12px;
-    margin-bottom: 4px;
-    background: rgba(77, 212, 212, 0.05);
-    border-radius: 0 4px 4px 0;
-  }
-  .history-item.golden {
-    border-left-color: #ffd84d;
-    background: rgba(255, 216, 77, 0.07);
-  }
-  .history-time { font-size: 12px; color: #4dd4d4; letter-spacing: 1px; }
-  .history-name { font-size: 18px; }
-  .empty {
-    text-align: center;
-    opacity: 0.55;
-    padding: 28px 12px;
-    font-size: 16px;
-    letter-spacing: 2px;
+    font-size: 36px;
+    text-shadow: 0 0 14px rgba(255, 216, 77, 0.7);
   }
 
   @media (max-width: 600px) {
-    .title { font-size: 38px; letter-spacing: 3px; }
+    .title { font-size: 40px; letter-spacing: 3px; }
     .subtitle { letter-spacing: 4px; font-size: 12px; }
-    .spin-btn { font-size: 24px; padding: 14px 40px; letter-spacing: 4px; }
-    .tab { padding: 8px 14px; font-size: 14px; }
+    .spin-btn { font-size: 28px; padding: 16px 48px; letter-spacing: 6px; }
+    .result-text { font-size: 24px; }
+    .result.golden .result-text { font-size: 30px; }
   }
 </style>
 </head>
@@ -342,120 +183,195 @@
 
 <header>
   <h1 class="title">WHEEL OF FUN</h1>
-  <div class="subtitle">&#9733; ROAD TRIP EDITION &#9733;</div>
+  <div class="subtitle" id="subtitle">&#9733; ROAD TRIP EDITION &#9733;</div>
 </header>
 
-<nav class="tabs">
-  <button class="tab active" data-view="spin">SPIN</button>
-  <button class="tab" data-view="edit">EDIT WHEEL</button>
-  <button class="tab" data-view="history">HISTORY</button>
-</nav>
-
-<section class="view active" id="view-spin">
+<main>
   <div class="wheel-wrap">
     <div class="pointer"></div>
     <canvas class="wheel" width="600" height="600"></canvas>
   </div>
-  <div class="tokens" id="tokens"></div>
+
   <div class="controls">
     <button class="spin-btn" id="spinBtn">SPIN</button>
   </div>
+
   <div class="result" id="result">
-    <div class="result-label">&#9733; YOUR FUN &#9733;</div>
+    <div class="result-label">&#9733; YOUR PRIZE &#9733;</div>
     <div class="result-text">Tap SPIN to start</div>
   </div>
-</section>
-
-<section class="view" id="view-edit">
-  <ul class="activity-list" id="activityList"></ul>
-  <div style="text-align:center; margin-top:14px;">
-    <button class="add-btn" id="addBtn">+ ADD ACTIVITY</button>
-    <button class="secondary-btn" id="addGoldenBtn">+ GOLDEN TICKET</button>
-    <button class="reset-btn" id="resetBtn">RESET TO DEFAULTS</button>
-  </div>
-</section>
-
-<section class="view" id="view-history">
-  <ul class="history-list" id="historyList"></ul>
-  <div style="text-align:center; margin-top:10px;">
-    <button class="reset-btn" id="clearHistoryBtn">CLEAR HISTORY</button>
-  </div>
-</section>
+</main>
 
 <script>
 (function () {
   'use strict';
 
-  // ---------- Defaults ----------
-  const DEFAULTS = [
-    { name: "Pick the next podcast",                 weight: 5 },
-    { name: "Gas station snack of your choice",      weight: 7 },
-    { name: "15 min TV time at next stop",           weight: 4 },
-    { name: "Scenic detour - find one in 10 min",    weight: 3 },
-    { name: "Photo stop at next exit",               weight: 4 },
-    { name: "Fancy drink at next gas station",       weight: 6 },
-    { name: "Windows down, one song full volume",    weight: 5 },
-    { name: "Mystery snack - try something new",     weight: 5 },
-    { name: "Local landmark detour",                 weight: 2 },
-    { name: "Ice cream stop next opportunity",       weight: 4 },
-    { name: "Backseat DJ for 30 min",                weight: 5 },
-    { name: "Driver picks next meal stop",           weight: 4 },
-    { name: "Trivia round - winner gets next snack", weight: 3 },
-    { name: "Audiobook or comedy track",             weight: 4 },
-    { name: "5 min stretch + walk at next exit",     weight: 5 },
-    { name: "Souvenir hunt at next stop",            weight: 3 },
-    { name: "Restaurant roulette next meal",         weight: 3 },
-    { name: "Sing-along road trip anthem",           weight: 5 },
-    { name: "GOLDEN TICKET",                         weight: 2, golden: true }
+  // ---------- Fixed slices ----------
+  const SLICES = [
+    { name: 'Fun Drink',  weight: 3, color: '#4dd4d4', icon: 'drink'  },
+    { name: 'Fun Snack',  weight: 3, color: '#ec7547', icon: 'snack'  },
+    { name: 'Fun Candy',  weight: 3, color: '#d97acc', icon: 'candy'  },
+    { name: 'Movie Time', weight: 3, color: '#a36ad9', icon: 'movie'  },
+    { name: 'Ice Cream',  weight: 1, color: null,      icon: 'icecream', golden: true }
   ];
 
-  const PALETTE = [
-    "#d94f4f", "#e8a83d", "#4dd4d4", "#7ab87a",
-    "#d97acc", "#ec7547", "#5b9bd5", "#c97c5d",
-    "#a36ad9", "#69b369"
-  ];
-
-  // ---------- State ----------
-  const STORAGE_KEY = 'wheelOfFun.v1';
-  let state = { activities: [], tokens: 0, history: [], nextId: 1 };
-
-  function load() {
-    let firstRun = true;
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        state = JSON.parse(raw);
-        firstRun = false;
-      }
-    } catch (e) { /* ignore */ }
-    if (firstRun || !Array.isArray(state.activities)) {
-      state.activities = DEFAULTS.map((d, i) => Object.assign({ id: i + 1 }, d));
-      state.nextId = DEFAULTS.length + 1;
-    }
-    if (typeof state.tokens !== 'number') state.tokens = 0;
-    if (!Array.isArray(state.history)) state.history = [];
-    if (typeof state.nextId !== 'number') {
-      const ids = state.activities.map(a => a.id || 0);
-      state.nextId = (ids.length ? Math.max.apply(null, ids) : 0) + 1;
-    }
-  }
-
-  function save() {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-    catch (e) { /* ignore */ }
-  }
-
-  function colorFor(activity, idx) {
-    if (activity.golden) return '#ffd84d';
-    // Stable across reorder/delete: hash on id.
-    return PALETTE[(activity.id || idx) % PALETTE.length];
-  }
-
-  // ---------- Wheel rendering ----------
+  // ---------- Canvas ----------
   const canvas = document.querySelector('.wheel');
   const ctx = canvas.getContext('2d');
   let rotation = 0;
+  let spinning = false;
+  let forceGolden = false;
 
+  // ---------- Outline icons ----------
+  // Each draws centered at (0,0) in a local frame where -y points outward.
+  // Strokes use the current ctx.strokeStyle and lineWidth.
+  function drawIcon(name) {
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = 4;
+    switch (name) {
+      case 'drink':    return drawDrink();
+      case 'snack':    return drawSnack();
+      case 'candy':    return drawCandy();
+      case 'movie':    return drawMovie();
+      case 'icecream': return drawIceCream();
+    }
+  }
+
+  function drawDrink() {
+    // Cup (trapezoid wider at top), lid line, straw
+    ctx.beginPath();
+    ctx.moveTo(-18, -16);
+    ctx.lineTo(18, -16);
+    ctx.lineTo(14, 22);
+    ctx.lineTo(-14, 22);
+    ctx.closePath();
+    ctx.stroke();
+    // Lid
+    ctx.beginPath();
+    ctx.moveTo(-20, -16);
+    ctx.lineTo(20, -16);
+    ctx.stroke();
+    // Straw
+    ctx.beginPath();
+    ctx.moveTo(4, -16);
+    ctx.lineTo(12, -32);
+    ctx.stroke();
+    // Bubbles / label band
+    ctx.beginPath();
+    ctx.moveTo(-12, 2);
+    ctx.lineTo(12, 2);
+    ctx.stroke();
+  }
+
+  function drawSnack() {
+    // Cookie body
+    ctx.beginPath();
+    ctx.arc(0, 0, 20, 0, Math.PI * 2);
+    ctx.stroke();
+    // Chocolate chips (filled dots)
+    const prevFill = ctx.fillStyle;
+    ctx.fillStyle = ctx.strokeStyle;
+    const chips = [[-8, -6], [6, -3], [-3, 8], [9, 9], [-10, 4]];
+    chips.forEach(([x, y]) => {
+      ctx.beginPath();
+      ctx.arc(x, y, 2.4, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.fillStyle = prevFill;
+  }
+
+  function drawCandy() {
+    // Wrapped candy: oval body + twisted ends
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 14, 10, 0, 0, Math.PI * 2);
+    ctx.stroke();
+    // Left twist
+    ctx.beginPath();
+    ctx.moveTo(-14, 0);
+    ctx.lineTo(-24, -9);
+    ctx.lineTo(-20, 0);
+    ctx.lineTo(-24, 9);
+    ctx.closePath();
+    ctx.stroke();
+    // Right twist
+    ctx.beginPath();
+    ctx.moveTo(14, 0);
+    ctx.lineTo(24, -9);
+    ctx.lineTo(20, 0);
+    ctx.lineTo(24, 9);
+    ctx.closePath();
+    ctx.stroke();
+    // Stripe in middle
+    ctx.beginPath();
+    ctx.moveTo(-9, -6);
+    ctx.quadraticCurveTo(0, -2, 9, -6);
+    ctx.stroke();
+  }
+
+  function drawMovie() {
+    // Clapperboard: board (bottom) + slate (top) with diagonal stripes
+    // Board
+    ctx.beginPath();
+    ctx.rect(-22, -4, 44, 24);
+    ctx.stroke();
+    // Slate
+    ctx.beginPath();
+    ctx.rect(-22, -18, 44, 10);
+    ctx.stroke();
+    // Diagonals on slate
+    ctx.beginPath();
+    ctx.moveTo(-14, -18); ctx.lineTo(-22, -8);
+    ctx.moveTo(-2, -18);  ctx.lineTo(-10, -8);
+    ctx.moveTo(10, -18);  ctx.lineTo(2, -8);
+    ctx.moveTo(22, -18);  ctx.lineTo(14, -8);
+    ctx.stroke();
+  }
+
+  function drawIceCream() {
+    // Cone (triangle pointing down) with crosshatch + scoop on top + cherry
+    // Cone outline
+    ctx.beginPath();
+    ctx.moveTo(-16, -2);
+    ctx.lineTo(16, -2);
+    ctx.lineTo(0, 26);
+    ctx.closePath();
+    ctx.stroke();
+    // Cone crosshatch
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(-16, -2);
+    ctx.lineTo(16, -2);
+    ctx.lineTo(0, 26);
+    ctx.closePath();
+    ctx.clip();
+    ctx.lineWidth = 2;
+    for (let i = -20; i <= 20; i += 6) {
+      ctx.beginPath();
+      ctx.moveTo(i, -4); ctx.lineTo(i + 14, 28);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(i, -4); ctx.lineTo(i - 14, 28);
+      ctx.stroke();
+    }
+    ctx.restore();
+    ctx.lineWidth = 4;
+    // Scoop (semicircle bump)
+    ctx.beginPath();
+    ctx.arc(0, -2, 16, Math.PI, 0);
+    ctx.stroke();
+    // Cherry on top
+    ctx.beginPath();
+    ctx.arc(0, -22, 4.5, 0, Math.PI * 2);
+    ctx.stroke();
+    // Stem
+    ctx.beginPath();
+    ctx.moveTo(0, -26);
+    ctx.quadraticCurveTo(5, -32, 10, -30);
+    ctx.stroke();
+  }
+
+  // ---------- Wheel drawing ----------
   function drawWheel() {
     const W = canvas.width, H = canvas.height;
     const cx = W / 2, cy = H / 2;
@@ -463,72 +379,50 @@
 
     ctx.clearRect(0, 0, W, H);
 
-    const acts = state.activities;
-    if (acts.length === 0) {
-      ctx.save();
-      ctx.translate(cx, cy);
-      ctx.beginPath();
-      ctx.arc(0, 0, R, 0, Math.PI * 2);
-      ctx.fillStyle = '#1a1410';
-      ctx.fill();
-      ctx.strokeStyle = '#4dd4d4';
-      ctx.lineWidth = 6;
-      ctx.stroke();
-      ctx.fillStyle = '#f4ead8';
-      ctx.font = 'bold 28px Impact, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('ADD ACTIVITIES', 0, -10);
-      ctx.fillText('TO BEGIN', 0, 26);
-      ctx.restore();
-      return;
-    }
+    const total = SLICES.reduce((s, a) => s + a.weight, 0);
 
-    const total = acts.reduce((s, a) => s + Math.max(1, a.weight || 1), 0);
-
-    // Rotating slices
+    // Rotating slices + icons
     ctx.save();
     ctx.translate(cx, cy);
     ctx.rotate(rotation);
 
     let start = -Math.PI / 2;
-    acts.forEach((a, i) => {
-      const sliceAngle = (Math.max(1, a.weight || 1) / total) * Math.PI * 2;
+    SLICES.forEach((s, i) => {
+      const sliceAngle = (s.weight / total) * Math.PI * 2;
       const end = start + sliceAngle;
+      const mid = start + sliceAngle / 2;
 
+      // Slice fill
       ctx.beginPath();
       ctx.moveTo(0, 0);
       ctx.arc(0, 0, R, start, end);
       ctx.closePath();
-
-      if (a.golden) {
-        const grad = ctx.createRadialGradient(0, 0, R * 0.15, 0, 0, R);
+      if (s.golden) {
+        const grad = ctx.createRadialGradient(0, 0, R * 0.12, 0, 0, R);
         grad.addColorStop(0, '#fff5b8');
         grad.addColorStop(0.55, '#ffd84d');
         grad.addColorStop(1, '#b8902a');
         ctx.fillStyle = grad;
       } else {
-        ctx.fillStyle = colorFor(a, i);
+        ctx.fillStyle = s.color;
       }
       ctx.fill();
 
+      // Slice divider
       ctx.strokeStyle = '#1a1410';
       ctx.lineWidth = 3;
       ctx.stroke();
 
-      // Slice label (radial)
+      // Icon: rotate so its "up" points outward, place at radial distance
       ctx.save();
-      const mid = start + sliceAngle / 2;
-      ctx.rotate(mid);
-      ctx.textAlign = 'right';
-      ctx.textBaseline = 'middle';
-      ctx.fillStyle = a.golden ? '#5a4515' : '#1a1410';
-      const fontSize = Math.max(11, Math.min(20, sliceAngle * 34));
-      ctx.font = 'bold ' + fontSize + 'px Impact, Anton, sans-serif';
-      const maxChars = Math.max(8, Math.floor(R / 9));
-      const text = a.name || '';
-      const display = text.length > maxChars ? text.slice(0, maxChars - 1) + '…' : text;
-      ctx.fillText(display, R - 16, 0);
+      ctx.rotate(mid + Math.PI / 2);
+      const iconR = sliceAngle < 0.9 ? R * 0.62 : R * 0.58;
+      ctx.translate(0, -iconR);
+      // Scale narrow slices down a touch so icon fits
+      const scale = sliceAngle < 0.7 ? 0.82 : 1.0;
+      ctx.scale(scale, scale);
+      ctx.strokeStyle = s.golden ? '#5a4515' : '#f4ead8';
+      drawIcon(s.icon);
       ctx.restore();
 
       start = end;
@@ -557,10 +451,10 @@
     ctx.stroke();
     ctx.setLineDash([]);
 
-    // Center hub badge
+    // Center hub
     ctx.beginPath();
-    ctx.arc(0, 0, 42, 0, Math.PI * 2);
-    const hubGrad = ctx.createRadialGradient(0, 0, 4, 0, 0, 42);
+    ctx.arc(0, 0, 44, 0, Math.PI * 2);
+    const hubGrad = ctx.createRadialGradient(0, 0, 4, 0, 0, 44);
     hubGrad.addColorStop(0, '#ffd84d');
     hubGrad.addColorStop(1, '#b8902a');
     ctx.fillStyle = hubGrad;
@@ -570,7 +464,7 @@
     ctx.stroke();
 
     ctx.fillStyle = '#1a1410';
-    ctx.font = 'bold 36px Impact, sans-serif';
+    ctx.font = 'bold 40px Impact, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText('★', 0, 3);
@@ -578,27 +472,27 @@
     ctx.restore();
   }
 
-  // ---------- Spin physics ----------
-  let spinning = false;
-  let useToken = false;
-
-  function pickActivityIndex() {
-    const acts = state.activities;
-    const total = acts.reduce((s, a) => s + Math.max(1, a.weight || 1), 0);
+  // ---------- Spin ----------
+  function pickIndex() {
+    if (forceGolden) {
+      const i = SLICES.findIndex(s => s.golden);
+      forceGolden = false;
+      return i;
+    }
+    const total = SLICES.reduce((s, a) => s + a.weight, 0);
     let roll = Math.random() * total;
-    for (let i = 0; i < acts.length; i++) {
-      roll -= Math.max(1, acts[i].weight || 1);
+    for (let i = 0; i < SLICES.length; i++) {
+      roll -= SLICES[i].weight;
       if (roll <= 0) return i;
     }
-    return acts.length - 1;
+    return SLICES.length - 1;
   }
 
   function cumAngleToSliceMid(targetIdx) {
-    const acts = state.activities;
-    const total = acts.reduce((s, a) => s + Math.max(1, a.weight || 1), 0);
+    const total = SLICES.reduce((s, a) => s + a.weight, 0);
     let cum = 0;
-    for (let i = 0; i < acts.length; i++) {
-      const slice = (Math.max(1, acts[i].weight || 1) / total) * Math.PI * 2;
+    for (let i = 0; i < SLICES.length; i++) {
+      const slice = (SLICES[i].weight / total) * Math.PI * 2;
       if (i === targetIdx) return cum + slice / 2;
       cum += slice;
     }
@@ -606,39 +500,36 @@
   }
 
   function currentSliceIndex() {
-    const acts = state.activities;
-    if (!acts.length) return -1;
-    const total = acts.reduce((s, a) => s + Math.max(1, a.weight || 1), 0);
-    // Pointer is fixed at top. In wheel local frame, pointer angle = -π/2 - rotation.
-    // Slice 0 starts at -π/2, so distance into wheel = -rotation (mod 2π).
+    const total = SLICES.reduce((s, a) => s + a.weight, 0);
     let p = (-rotation) % (Math.PI * 2);
     while (p < 0) p += Math.PI * 2;
     let cum = 0;
-    for (let i = 0; i < acts.length; i++) {
-      const slice = (Math.max(1, acts[i].weight || 1) / total) * Math.PI * 2;
+    for (let i = 0; i < SLICES.length; i++) {
+      const slice = (SLICES[i].weight / total) * Math.PI * 2;
       cum += slice;
       if (p < cum) return i;
     }
-    return acts.length - 1;
+    return SLICES.length - 1;
   }
 
   function spin() {
-    if (spinning || state.activities.length === 0) return;
+    if (spinning) return;
     spinning = true;
     document.getElementById('spinBtn').disabled = true;
     const resultEl = document.getElementById('result');
     resultEl.classList.remove('golden');
     resultEl.querySelector('.result-text').textContent = '…';
 
-    const targetIdx = pickActivityIndex();
-    const sliceMid = cumAngleToSliceMid(targetIdx); // distance from slice-0 start
-    const turns = 5 + Math.floor(Math.random() * 3); // 5-7 full turns
+    const targetIdx = pickIndex();
+    const sliceMid = cumAngleToSliceMid(targetIdx);
+    // Random offset within the slice so it doesn't always land exactly center
+    const total = SLICES.reduce((s, a) => s + a.weight, 0);
+    const sliceAngle = (SLICES[targetIdx].weight / total) * Math.PI * 2;
+    const jitter = (Math.random() - 0.5) * sliceAngle * 0.7;
 
-    // Land slice mid at pointer (top): rotation such that p = -rotation mod 2π == sliceMid
-    // => rotation = -sliceMid (mod 2π). Add full turns for animation length.
     const startRot = rotation;
-    const desiredFinal = -sliceMid;
-    // Normalize so target > start by at least `turns` rotations.
+    const desiredFinal = -(sliceMid + jitter);
+    const turns = 5 + Math.floor(Math.random() * 3);
     let targetRot = desiredFinal;
     while (targetRot - startRot < turns * Math.PI * 2) {
       targetRot += Math.PI * 2;
@@ -654,53 +545,29 @@
       const t = Math.min(1, (now - t0) / duration);
       rotation = startRot + (targetRot - startRot) * ease(t);
       drawWheel();
-
       const cur = currentSliceIndex();
-      if (cur !== lastIdx) {
-        tick();
-        lastIdx = cur;
-      }
-
-      if (t < 1) {
-        requestAnimationFrame(frame);
-      } else {
-        rotation = targetRot;
-        drawWheel();
-        finishSpin(targetIdx);
-      }
+      if (cur !== lastIdx) { tick(); lastIdx = cur; }
+      if (t < 1) requestAnimationFrame(frame);
+      else { rotation = targetRot; drawWheel(); finishSpin(targetIdx); }
     }
     requestAnimationFrame(frame);
   }
 
   function finishSpin(idx) {
-    const a = state.activities[idx];
+    const s = SLICES[idx];
     spinning = false;
     document.getElementById('spinBtn').disabled = false;
-
-    if (useToken) {
-      state.tokens = Math.max(0, state.tokens - 1);
-      useToken = false;
-    }
-
     const resultEl = document.getElementById('result');
-    if (a.golden) {
-      state.tokens += 1;
+    if (s.golden) {
       resultEl.classList.add('golden');
-      resultEl.querySelector('.result-text').textContent =
-        '★ GOLDEN TICKET! +1 re-spin token ★';
+      resultEl.querySelector('.result-text').textContent = '★ ICE CREAM! ★';
     } else {
       resultEl.classList.remove('golden');
-      resultEl.querySelector('.result-text').textContent = a.name;
+      resultEl.querySelector('.result-text').textContent = s.name;
     }
-
-    state.history.unshift({ ts: Date.now(), name: a.name, golden: !!a.golden });
-    state.history = state.history.slice(0, 200);
-    save();
-    renderTokens();
-    if (document.getElementById('view-history').classList.contains('active')) renderHistory();
   }
 
-  // ---------- Tick click (WebAudio) ----------
+  // ---------- Tick sound ----------
   let audioCtx = null;
   function tick() {
     try {
@@ -719,168 +586,27 @@
     } catch (e) { /* ignore */ }
   }
 
-  // ---------- Tokens UI ----------
-  function renderTokens() {
-    const el = document.getElementById('tokens');
-    const btn = document.getElementById('spinBtn');
-    el.innerHTML = '';
-    btn.classList.toggle('armed', useToken && state.tokens > 0);
-    btn.textContent = (useToken && state.tokens > 0) ? 'RE-SPIN' : 'SPIN';
-
-    if (state.tokens > 0) {
-      const label = document.createElement('span');
-      label.className = 'tokens-label';
-      label.textContent = '★ GOLDEN TICKETS (' + state.tokens + ') — TAP TO ARM A RE-SPIN ★';
-      el.appendChild(label);
-      const wrap = document.createElement('div');
-      for (let i = 0; i < Math.min(state.tokens, 10); i++) {
-        const t = document.createElement('button');
-        t.className = 'token' + (useToken && i === 0 ? ' armed' : '');
-        t.textContent = '★';
-        t.addEventListener('click', () => {
-          useToken = !useToken;
-          renderTokens();
-        });
-        wrap.appendChild(t);
-      }
-      if (state.tokens > 10) {
-        const more = document.createElement('span');
-        more.style.color = '#ffd84d';
-        more.style.marginLeft = '6px';
-        more.textContent = '+' + (state.tokens - 10);
-        wrap.appendChild(more);
-      }
-      el.appendChild(wrap);
+  // ---------- Secret trigger: triple-tap the subtitle ----------
+  const subtitle = document.getElementById('subtitle');
+  let tapCount = 0;
+  let tapTimer = null;
+  function onSecretTap() {
+    tapCount += 1;
+    clearTimeout(tapTimer);
+    if (tapCount >= 3) {
+      tapCount = 0;
+      forceGolden = true;
+      subtitle.classList.add('armed');
+      setTimeout(() => subtitle.classList.remove('armed'), 1000);
+    } else {
+      tapTimer = setTimeout(() => { tapCount = 0; }, 1500);
     }
   }
-
-  // ---------- Edit view ----------
-  function escapeAttr(s) {
-    return String(s).replace(/[&<>"']/g, c => ({
-      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-    }[c]));
-  }
-
-  function renderActivities() {
-    const list = document.getElementById('activityList');
-    list.innerHTML = '';
-    if (state.activities.length === 0) {
-      list.innerHTML = '<li class="empty">No activities yet. Tap +ADD ACTIVITY to start.</li>';
-      return;
-    }
-    state.activities.forEach((a, i) => {
-      const li = document.createElement('li');
-      li.className = 'activity' + (a.golden ? ' golden' : '');
-      const color = colorFor(a, i);
-      li.innerHTML =
-        '<div class="swatch" style="background:' + color + '"></div>' +
-        '<input type="text" class="name-input" value="' + escapeAttr(a.name) + '" />' +
-        '<button class="delete-btn">DELETE</button>' +
-        '<div class="weight-row">' +
-          '<label>WEIGHT</label>' +
-          '<input type="range" min="1" max="10" value="' + a.weight + '" />' +
-          '<span class="weight-val">' + a.weight + '</span>' +
-        '</div>';
-
-      const nameInput = li.querySelector('.name-input');
-      const range = li.querySelector('input[type="range"]');
-      const wval = li.querySelector('.weight-val');
-      const del = li.querySelector('.delete-btn');
-
-      nameInput.addEventListener('input', e => {
-        a.name = e.target.value;
-        save();
-        drawWheel();
-      });
-      range.addEventListener('input', e => {
-        a.weight = parseInt(e.target.value, 10) || 1;
-        wval.textContent = a.weight;
-        save();
-        drawWheel();
-      });
-      del.addEventListener('click', () => {
-        if (confirm('Delete "' + a.name + '"?')) {
-          state.activities.splice(i, 1);
-          save();
-          renderActivities();
-          drawWheel();
-        }
-      });
-
-      list.appendChild(li);
-    });
-  }
-
-  document.getElementById('addBtn').addEventListener('click', () => {
-    state.activities.push({ id: state.nextId++, name: 'New fun thing', weight: 5 });
-    save();
-    renderActivities();
-    drawWheel();
-  });
-
-  document.getElementById('addGoldenBtn').addEventListener('click', () => {
-    state.activities.push({ id: state.nextId++, name: 'GOLDEN TICKET', weight: 2, golden: true });
-    save();
-    renderActivities();
-    drawWheel();
-  });
-
-  document.getElementById('resetBtn').addEventListener('click', () => {
-    if (confirm('Reset all activities to defaults? Tokens and history are kept.')) {
-      state.activities = DEFAULTS.map((d, i) => Object.assign({ id: i + 1 }, d));
-      state.nextId = DEFAULTS.length + 1;
-      save();
-      renderActivities();
-      drawWheel();
-    }
-  });
-
-  // ---------- History ----------
-  function renderHistory() {
-    const list = document.getElementById('historyList');
-    list.innerHTML = '';
-    if (state.history.length === 0) {
-      list.innerHTML = '<li class="empty">No spins yet. Hit SPIN to start.</li>';
-      return;
-    }
-    state.history.forEach(h => {
-      const li = document.createElement('li');
-      li.className = 'history-item' + (h.golden ? ' golden' : '');
-      const d = new Date(h.ts);
-      li.innerHTML =
-        '<div class="history-time">' + d.toLocaleString() + '</div>' +
-        '<div class="history-name">' + escapeAttr(h.name) + '</div>';
-      list.appendChild(li);
-    });
-  }
-
-  document.getElementById('clearHistoryBtn').addEventListener('click', () => {
-    if (confirm('Clear all spin history?')) {
-      state.history = [];
-      save();
-      renderHistory();
-    }
-  });
-
-  // ---------- Tabs ----------
-  document.querySelectorAll('.tab').forEach(t => {
-    t.addEventListener('click', () => {
-      document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
-      document.querySelectorAll('.view').forEach(x => x.classList.remove('active'));
-      t.classList.add('active');
-      const view = t.dataset.view;
-      document.getElementById('view-' + view).classList.add('active');
-      if (view === 'edit') renderActivities();
-      if (view === 'history') renderHistory();
-    });
-  });
-
-  document.getElementById('spinBtn').addEventListener('click', spin);
+  subtitle.addEventListener('click', onSecretTap);
 
   // ---------- Init ----------
-  load();
+  document.getElementById('spinBtn').addEventListener('click', spin);
   drawWheel();
-  renderTokens();
 })();
 </script>
 </body>
