@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d0907">
+<title>Wheel of Fun — Icon Mockups</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: #14141a;
+    color: #f4ead8;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    min-height: 100vh;
+    padding: 18px 0 60px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .page-header { text-align: center; padding: 18px 16px 8px; max-width: 720px; margin: 0 auto; }
+  .page-header h1 { margin: 0 0 6px; font-size: 22px; }
+  .page-header p { margin: 0; color: #aaa; font-size: 13px; line-height: 1.45; }
+
+  .cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+    max-width: 460px;
+    margin: 28px auto 0;
+    padding: 0 16px;
+  }
+  .card-wrap .card-label {
+    color: #cfcfcf;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin: 0 0 6px;
+    padding: 0 2px;
+  }
+  .card-wrap .card-blurb {
+    color: #888;
+    font-size: 12px;
+    margin: 0 0 8px;
+    padding: 0 2px;
+    line-height: 1.4;
+  }
+
+  /* Road Trip Neon shell */
+  .card {
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.55);
+    background: radial-gradient(ellipse at top, #2a1f1a 0%, #0d0907 70%);
+    font-family: 'Impact', 'Arial Black', sans-serif;
+    color: #f4ead8;
+    position: relative;
+  }
+  .card .road-lines {
+    background: repeating-linear-gradient(90deg, #ffd84d 0 30px, transparent 30px 60px);
+    height: 5px;
+    opacity: 0.55;
+  }
+  .card .header { text-align: center; padding: 22px 12px 4px; position: relative; z-index: 2; }
+  .card .title {
+    margin: 0;
+    display: inline-block;
+    color: #ff5e7e;
+    text-shadow: 0 0 6px #ff5e7e, 0 0 14px #ff5e7e, 3px 3px 0 #1a0e0a;
+    font-size: 36px;
+    letter-spacing: 4px;
+    transform: skewX(-6deg);
+  }
+  .card .subtitle {
+    display: block;
+    margin-top: 4px;
+    color: #4dd4d4;
+    text-shadow: 0 0 8px #4dd4d4;
+    font-size: 11px;
+    letter-spacing: 5px;
+  }
+  .card .wheel-wrap {
+    position: relative;
+    width: 320px;
+    height: 320px;
+    margin: 14px auto 6px;
+    z-index: 2;
+  }
+  .card canvas { width: 100%; height: 100%; display: block; cursor: pointer; }
+  .card .pointer {
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    margin-left: -14px;
+    width: 0; height: 0;
+    border-left: 14px solid transparent;
+    border-right: 14px solid transparent;
+    border-top: 26px solid #ff5e7e;
+    filter: drop-shadow(0 0 6px #ff5e7e);
+    z-index: 3;
+    pointer-events: none;
+  }
+  .card .controls { text-align: center; padding: 10px 12px 24px; position: relative; z-index: 2; }
+  .card .spin-btn {
+    background: linear-gradient(180deg, #ff5e7e 0%, #cc3a5e 100%);
+    color: #fff;
+    border: 2px solid #ffd84d;
+    box-shadow: 0 0 18px rgba(255, 94, 126, 0.5);
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.4);
+    border-radius: 26px;
+    padding: 12px 36px;
+    font-size: 18px;
+    letter-spacing: 4px;
+    font-family: inherit;
+    cursor: pointer;
+    font-weight: 800;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Wheel of Fun — Icon Mockups</h1>
+  <p>Same carnival wheel; only the icon style changes. Tap any wheel (or its SPIN button) to preview a spin.</p>
+</div>
+
+<div class="cards">
+
+  <div class="card-wrap">
+    <div class="card-label">Style 1 — Thick Outline (current)</div>
+    <div class="card-blurb">4px dark stroke, no fill. The look that's live now — boldest weight.</div>
+    <div class="card">
+      <div class="road-lines"></div>
+      <div class="header">
+        <h2 class="title">WHEEL OF FUN</h2>
+        <div class="subtitle">&#9733; ROAD TRIP EDITION &#9733;</div>
+      </div>
+      <div class="wheel-wrap">
+        <div class="pointer"></div>
+        <canvas data-icon-style="thick" width="720" height="720"></canvas>
+      </div>
+      <div class="controls"><button class="spin-btn">SPIN</button></div>
+      <div class="road-lines"></div>
+    </div>
+  </div>
+
+  <div class="card-wrap">
+    <div class="card-label">Style 2 — Thin Outline</div>
+    <div class="card-blurb">Same shapes, 2px stroke. Lighter and a bit more refined; still clearly readable on every slice color.</div>
+    <div class="card">
+      <div class="road-lines"></div>
+      <div class="header">
+        <h2 class="title">WHEEL OF FUN</h2>
+        <div class="subtitle">&#9733; ROAD TRIP EDITION &#9733;</div>
+      </div>
+      <div class="wheel-wrap">
+        <div class="pointer"></div>
+        <canvas data-icon-style="thin" width="720" height="720"></canvas>
+      </div>
+      <div class="controls"><button class="spin-btn">SPIN</button></div>
+      <div class="road-lines"></div>
+    </div>
+  </div>
+
+  <div class="card-wrap">
+    <div class="card-label">Style 3 — Dainty</div>
+    <div class="card-blurb">Thin outline plus ~25% smaller scale. Lets the slice color breathe; icons feel more like accents than the focal point.</div>
+    <div class="card">
+      <div class="road-lines"></div>
+      <div class="header">
+        <h2 class="title">WHEEL OF FUN</h2>
+        <div class="subtitle">&#9733; ROAD TRIP EDITION &#9733;</div>
+      </div>
+      <div class="wheel-wrap">
+        <div class="pointer"></div>
+        <canvas data-icon-style="dainty" width="720" height="720"></canvas>
+      </div>
+      <div class="controls"><button class="spin-btn">SPIN</button></div>
+      <div class="road-lines"></div>
+    </div>
+  </div>
+
+  <div class="card-wrap">
+    <div class="card-label">Style 4 — Outline + Cream Fill</div>
+    <div class="card-blurb">Thin outline with a soft cream wash inside the shapes. Reads like a coloring-book page that's been lightly tinted.</div>
+    <div class="card">
+      <div class="road-lines"></div>
+      <div class="header">
+        <h2 class="title">WHEEL OF FUN</h2>
+        <div class="subtitle">&#9733; ROAD TRIP EDITION &#9733;</div>
+      </div>
+      <div class="wheel-wrap">
+        <div class="pointer"></div>
+        <canvas data-icon-style="cream" width="720" height="720"></canvas>
+      </div>
+      <div class="controls"><button class="spin-btn">SPIN</button></div>
+      <div class="road-lines"></div>
+    </div>
+  </div>
+
+  <div class="card-wrap">
+    <div class="card-label">Style 5 — Two-Tone Illustrated</div>
+    <div class="card-blurb">Thin outline + real-life-ish fill colors per icon (cyan drink, tan cookie, red candy, pink scoop, etc). Looks like little drawings rather than symbols.</div>
+    <div class="card">
+      <div class="road-lines"></div>
+      <div class="header">
+        <h2 class="title">WHEEL OF FUN</h2>
+        <div class="subtitle">&#9733; ROAD TRIP EDITION &#9733;</div>
+      </div>
+      <div class="wheel-wrap">
+        <div class="pointer"></div>
+        <canvas data-icon-style="twoTone" width="720" height="720"></canvas>
+      </div>
+      <div class="controls"><button class="spin-btn">SPIN</button></div>
+      <div class="road-lines"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  const SLICES = [
+    { name: 'Fun Drink',  weight: 3, color: '#d94f4f', icon: 'drink'    },
+    { name: 'Fun Snack',  weight: 3, color: '#f4ead8', icon: 'snack'    },
+    { name: 'Fun Candy',  weight: 3, color: '#5b9bd5', icon: 'candy'    },
+    { name: 'Movie Time', weight: 3, color: '#ffd84d', icon: 'movie'    },
+    { name: 'Ice Cream',  weight: 1, color: null,      icon: 'icecream', golden: true }
+  ];
+
+  const BULB_CYCLE_MS = 250;
+
+  // ----------------------------------------------------------------
+  // Per-icon style fills.
+  // For "cream", everyone gets the same cream wash with `useAccentFromCream`.
+  // For "twoTone", each icon has its own palette to look more illustrated.
+  // ----------------------------------------------------------------
+  const CREAM_FILL = 'rgba(244, 234, 216, 0.75)';
+  const TWO_TONE = {
+    drink:    { body: '#7ac8d4', straw: '#d94f4f', lid: '#e8d4a8' },
+    snack:    { body: '#d4b88a', chip: '#5a3a18' },
+    candy:    { body: '#d94f4f', twist: '#f4ead8' },
+    movie:    { board: '#1a1410', slate: '#f4ead8' },
+    icecream: { cone: '#d4a96b', scoop: '#ff9bc5', cherry: '#d94f4f' }
+  };
+
+  // ----------------------------------------------------------------
+  // Icon shape primitives.
+  // Each is given the lineWidth/strokeStyle by the caller. Optionally
+  // accepts a `fills` object: when present, the shape is FILLED with the
+  // appropriate color before being stroked, giving filled or two-tone looks.
+  // ----------------------------------------------------------------
+  function drawDrink(ctx, fills) {
+    // Cup body
+    ctx.beginPath();
+    ctx.moveTo(-15, -14); ctx.lineTo(15, -14); ctx.lineTo(12, 18); ctx.lineTo(-12, 18); ctx.closePath();
+    if (fills && fills.body) { ctx.fillStyle = fills.body; ctx.fill(); }
+    ctx.stroke();
+    // Lid
+    ctx.beginPath();
+    if (fills && fills.lid) {
+      ctx.save();
+      ctx.lineWidth = ctx.lineWidth + 2;
+      ctx.strokeStyle = fills.lid;
+      ctx.moveTo(-17, -14); ctx.lineTo(17, -14);
+      ctx.stroke();
+      ctx.restore();
+      // Add the dark line on top of the lid color
+      ctx.beginPath();
+      ctx.moveTo(-17, -14); ctx.lineTo(17, -14);
+      ctx.stroke();
+    } else {
+      ctx.moveTo(-17, -14); ctx.lineTo(17, -14); ctx.stroke();
+    }
+    // Straw
+    if (fills && fills.straw) {
+      ctx.save();
+      ctx.lineWidth = Math.max(3, ctx.lineWidth + 1);
+      ctx.strokeStyle = fills.straw;
+      ctx.beginPath();
+      ctx.moveTo(4, -14); ctx.lineTo(11, -28);
+      ctx.stroke();
+      ctx.restore();
+    } else {
+      ctx.beginPath();
+      ctx.moveTo(4, -14); ctx.lineTo(11, -28); ctx.stroke();
+    }
+    // Band
+    ctx.beginPath();
+    ctx.moveTo(-10, 2); ctx.lineTo(10, 2); ctx.stroke();
+  }
+
+  function drawSnack(ctx, fills) {
+    ctx.beginPath();
+    ctx.arc(0, 0, 18, 0, Math.PI * 2);
+    if (fills && fills.body) { ctx.fillStyle = fills.body; ctx.fill(); }
+    ctx.stroke();
+    // Chips
+    const chipColor = (fills && fills.chip) ? fills.chip : ctx.strokeStyle;
+    const prevFill = ctx.fillStyle;
+    ctx.fillStyle = chipColor;
+    [[-7, -5], [5, -3], [-3, 7], [8, 8]].forEach(([x, y]) => {
+      ctx.beginPath(); ctx.arc(x, y, 2.4, 0, Math.PI * 2); ctx.fill();
+    });
+    ctx.fillStyle = prevFill;
+  }
+
+  function drawCandy(ctx, fills) {
+    // Body
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 13, 9, 0, 0, Math.PI * 2);
+    if (fills && fills.body) { ctx.fillStyle = fills.body; ctx.fill(); }
+    ctx.stroke();
+    // Twists
+    ctx.beginPath();
+    ctx.moveTo(-13, 0); ctx.lineTo(-22, -8); ctx.lineTo(-18, 0); ctx.lineTo(-22, 8); ctx.closePath();
+    if (fills && fills.twist) { ctx.fillStyle = fills.twist; ctx.fill(); }
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(13, 0); ctx.lineTo(22, -8); ctx.lineTo(18, 0); ctx.lineTo(22, 8); ctx.closePath();
+    if (fills && fills.twist) { ctx.fillStyle = fills.twist; ctx.fill(); }
+    ctx.stroke();
+    // Stripe
+    ctx.beginPath();
+    ctx.moveTo(-8, -5); ctx.quadraticCurveTo(0, -2, 8, -5); ctx.stroke();
+  }
+
+  function drawMovie(ctx, fills) {
+    // Board
+    ctx.beginPath();
+    ctx.rect(-20, -4, 40, 22);
+    if (fills && fills.board) { ctx.fillStyle = fills.board; ctx.fill(); }
+    else if (fills && fills.body) { ctx.fillStyle = fills.body; ctx.fill(); }
+    ctx.stroke();
+    // Slate
+    ctx.beginPath();
+    ctx.rect(-20, -16, 40, 9);
+    if (fills && fills.slate) { ctx.fillStyle = fills.slate; ctx.fill(); }
+    else if (fills && fills.body) { ctx.fillStyle = fills.body; ctx.fill(); }
+    ctx.stroke();
+    // Diagonals
+    ctx.beginPath();
+    ctx.moveTo(-12, -16); ctx.lineTo(-20, -7);
+    ctx.moveTo(-2,  -16); ctx.lineTo(-9,  -7);
+    ctx.moveTo(8,   -16); ctx.lineTo(1,   -7);
+    ctx.moveTo(20,  -16); ctx.lineTo(13,  -7);
+    ctx.stroke();
+  }
+
+  function drawIceCream(ctx, fills) {
+    // Cone
+    ctx.beginPath();
+    ctx.moveTo(-14, -2); ctx.lineTo(14, -2); ctx.lineTo(0, 22); ctx.closePath();
+    if (fills && fills.cone) { ctx.fillStyle = fills.cone; ctx.fill(); }
+    else if (fills && fills.body) { ctx.fillStyle = fills.body; ctx.fill(); }
+    ctx.stroke();
+    // Crosshatch on cone (skip when filled to keep it clean)
+    if (!fills || (!fills.cone && !fills.body)) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(-14, -2); ctx.lineTo(14, -2); ctx.lineTo(0, 22); ctx.closePath();
+      ctx.clip();
+      const baseLW = ctx.lineWidth;
+      ctx.lineWidth = Math.max(1, baseLW * 0.5);
+      for (let i = -18; i <= 18; i += 5) {
+        ctx.beginPath(); ctx.moveTo(i, -2); ctx.lineTo(i + 12, 24); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(i, -2); ctx.lineTo(i - 12, 24); ctx.stroke();
+      }
+      ctx.lineWidth = baseLW;
+      ctx.restore();
+    }
+    // Scoop
+    ctx.beginPath();
+    ctx.arc(0, -2, 14, Math.PI, 0);
+    ctx.lineTo(14, -2); ctx.lineTo(-14, -2); ctx.closePath();
+    if (fills && fills.scoop) { ctx.fillStyle = fills.scoop; ctx.fill(); }
+    else if (fills && fills.body) { ctx.fillStyle = fills.body; ctx.fill(); }
+    ctx.stroke();
+    // Cherry
+    ctx.beginPath();
+    ctx.arc(0, -18, 4, 0, Math.PI * 2);
+    if (fills && fills.cherry) { ctx.fillStyle = fills.cherry; ctx.fill(); }
+    else if (fills && fills.body) { ctx.fillStyle = fills.body; ctx.fill(); }
+    ctx.stroke();
+  }
+
+  function fillsForStyle(style, iconName) {
+    if (style === 'cream') {
+      // Same cream wash for everything that has a body-ish concept
+      if (iconName === 'icecream') return { cone: CREAM_FILL, scoop: CREAM_FILL, cherry: CREAM_FILL };
+      if (iconName === 'movie')    return { board: CREAM_FILL, slate: CREAM_FILL };
+      return { body: CREAM_FILL };
+    }
+    if (style === 'twoTone') return TWO_TONE[iconName];
+    return null;
+  }
+
+  function drawIconAt(ctx, name, style) {
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = style === 'thick' ? 4 : 2;
+    // strokeStyle is set by the caller (depends on golden/normal)
+    const fills = fillsForStyle(style, name);
+    switch (name) {
+      case 'drink':    drawDrink(ctx, fills);    break;
+      case 'snack':    drawSnack(ctx, fills);    break;
+      case 'candy':    drawCandy(ctx, fills);    break;
+      case 'movie':    drawMovie(ctx, fills);    break;
+      case 'icecream': drawIceCream(ctx, fills); break;
+    }
+  }
+
+  // ----------------------------------------------------------------
+  // Carnival wheel renderer (same as the live app), parameterized by
+  // icon style.
+  // ----------------------------------------------------------------
+  function drawCarnival(canvas, rotation, iconStyle) {
+    rotation = rotation || 0;
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    const cx = W / 2, cy = H / 2;
+    const R = Math.min(W, H) / 2 - 56;
+    ctx.clearRect(0, 0, W, H);
+
+    const total = SLICES.reduce((s, a) => s + a.weight, 0);
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(rotation);
+
+    let start = -Math.PI / 2;
+    SLICES.forEach((s) => {
+      const sliceAngle = (s.weight / total) * Math.PI * 2;
+      const end = start + sliceAngle;
+      const mid = start + sliceAngle / 2;
+
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.arc(0, 0, R, start, end);
+      ctx.closePath();
+      if (s.golden) {
+        const g = ctx.createRadialGradient(0, 0, R * 0.12, 0, 0, R);
+        g.addColorStop(0,    '#fff5b8');
+        g.addColorStop(0.55, '#ffd84d');
+        g.addColorStop(1,    '#b8902a');
+        ctx.fillStyle = g;
+      } else {
+        ctx.fillStyle = s.color;
+      }
+      ctx.fill();
+      ctx.strokeStyle = '#1a1410';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      // Icon
+      ctx.save();
+      ctx.rotate(mid + Math.PI / 2);
+      const iconR = sliceAngle < 0.9 ? R * 0.62 : R * 0.55;
+      ctx.translate(0, -iconR);
+      const scale = iconStyle === 'dainty'
+        ? (sliceAngle < 0.7 ? 0.85 : 1.15)
+        : (sliceAngle < 0.7 ? 1.15 : 1.5);
+      ctx.scale(scale, scale);
+      ctx.strokeStyle = s.golden ? '#5a4515' : '#1a1410';
+      drawIconAt(ctx, s.icon, iconStyle);
+      ctx.restore();
+
+      start = end;
+    });
+    ctx.restore();
+
+    // Carnival rim + animated bulbs + red hub
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.beginPath();
+    ctx.arc(0, 0, R, 0, Math.PI * 2);
+    ctx.strokeStyle = '#c9a23a';
+    ctx.lineWidth = 6;
+    ctx.stroke();
+
+    const BULB_N = 24;
+    const BULB_R_CENTER = R + 20;
+    const BULB_R_SIZE = 11;
+    const step = Math.floor(performance.now() / BULB_CYCLE_MS);
+    for (let i = 0; i < BULB_N; i++) {
+      const ang = (i / BULB_N) * Math.PI * 2;
+      const bx = Math.cos(ang) * BULB_R_CENTER;
+      const by = Math.sin(ang) * BULB_R_CENTER;
+      const lit = ((i + step) % 2) === 0;
+      if (lit) {
+        ctx.beginPath();
+        ctx.arc(bx, by, BULB_R_SIZE, 0, Math.PI * 2);
+        ctx.fillStyle = '#fff5d6';
+        ctx.shadowColor = '#ffd84d';
+        ctx.shadowBlur = 22;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.beginPath();
+        ctx.arc(bx, by, BULB_R_SIZE * 0.42, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+      } else {
+        ctx.beginPath();
+        ctx.arc(bx, by, BULB_R_SIZE, 0, Math.PI * 2);
+        ctx.fillStyle = '#3a2810';
+        ctx.fill();
+        ctx.strokeStyle = '#1a1410';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
+    }
+
+    // Hub
+    ctx.beginPath();
+    ctx.arc(0, 0, 44, 0, Math.PI * 2);
+    const hubGrad = ctx.createRadialGradient(-12, -12, 6, 0, 0, 44);
+    hubGrad.addColorStop(0, '#ff7a7a');
+    hubGrad.addColorStop(1, '#a01818');
+    ctx.fillStyle = hubGrad;
+    ctx.fill();
+    ctx.strokeStyle = '#c9a23a';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.fillStyle = '#ffd84d';
+    ctx.font = 'bold 40px Impact, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('★', 0, 3);
+    ctx.restore();
+  }
+
+  // ----------------------------------------------------------------
+  // Wire each canvas: initial render, tappable demo spin, marquee chase.
+  // ----------------------------------------------------------------
+  const wheels = [];
+  document.querySelectorAll('canvas[data-icon-style]').forEach(canvas => {
+    const style = canvas.dataset.iconStyle;
+    const w = { canvas, style, rot: 0, spinning: false };
+    wheels.push(w);
+    drawCarnival(canvas, 0, style);
+
+    function demoSpin() {
+      if (w.spinning) return;
+      w.spinning = true;
+      const startRot = w.rot;
+      const turns = 4 + Math.random() * 2;
+      const targetRot = startRot + turns * Math.PI * 2 + Math.random() * Math.PI * 2;
+      const t0 = performance.now();
+      const duration = 2800;
+      function frame(now) {
+        const t = Math.min(1, (now - t0) / duration);
+        const eased = 1 - Math.pow(1 - t, 3);
+        w.rot = startRot + (targetRot - startRot) * eased;
+        drawCarnival(canvas, w.rot, style);
+        if (t < 1) requestAnimationFrame(frame);
+        else { w.rot = targetRot; w.spinning = false; }
+      }
+      requestAnimationFrame(frame);
+    }
+    canvas.addEventListener('click', demoSpin);
+    const card = canvas.closest('.card');
+    if (card) {
+      const btn = card.querySelector('.spin-btn');
+      if (btn) btn.addEventListener('click', demoSpin);
+    }
+  });
+
+  // Drive the marquee chase across all wheels every BULB_CYCLE_MS
+  setInterval(() => {
+    wheels.forEach(w => { if (!w.spinning) drawCarnival(w.canvas, w.rot, w.style); });
+  }, BULB_CYCLE_MS);
+})();
+</script>
+</body>
+</html>
