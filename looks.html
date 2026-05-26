@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#1a1a1a">
-<title>Wheel of Fun — Style Mockups</title>
+<meta name="theme-color" content="#0d0907">
+<title>Wheel of Fun — Wheel Style Mockups</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
@@ -13,12 +13,13 @@
     color: #f4ead8;
     font-family: 'Helvetica Neue', Arial, sans-serif;
     min-height: 100vh;
-    padding: 20px 0 60px;
+    padding: 18px 0 60px;
     -webkit-tap-highlight-color: transparent;
   }
   .page-header { text-align: center; padding: 18px 16px 8px; max-width: 720px; margin: 0 auto; }
-  .page-header h1 { margin: 0 0 6px; font-size: 24px; }
-  .page-header p { margin: 0; color: #aaa; font-size: 13px; line-height: 1.4; }
+  .page-header h1 { margin: 0 0 6px; font-size: 22px; }
+  .page-header p { margin: 0; color: #aaa; font-size: 13px; line-height: 1.45; }
+
   .cards {
     display: grid;
     grid-template-columns: 1fr;
@@ -27,24 +28,55 @@
     margin: 28px auto 0;
     padding: 0 16px;
   }
-  .card-label {
+  .card-wrap .card-label {
     color: #cfcfcf;
     font-size: 11px;
     letter-spacing: 3px;
     text-transform: uppercase;
-    margin: 0 0 8px;
+    margin: 0 0 6px;
     padding: 0 2px;
   }
+  .card-wrap .card-blurb {
+    color: #888;
+    font-size: 12px;
+    margin: 0 0 8px;
+    padding: 0 2px;
+    line-height: 1.4;
+  }
+
+  /* Road Trip Neon shell (same as the live app) */
   .card {
     border-radius: 14px;
     overflow: hidden;
     box-shadow: 0 8px 28px rgba(0, 0, 0, 0.55);
+    background: radial-gradient(ellipse at top, #2a1f1a 0%, #0d0907 70%);
+    font-family: 'Impact', 'Arial Black', sans-serif;
+    color: #f4ead8;
     position: relative;
-    min-height: 480px;
+  }
+  .card .road-lines {
+    background: repeating-linear-gradient(90deg, #ffd84d 0 30px, transparent 30px 60px);
+    height: 5px;
+    opacity: 0.55;
   }
   .card .header { text-align: center; padding: 22px 12px 4px; position: relative; z-index: 2; }
-  .card .title { margin: 0; display: inline-block; }
-  .card .subtitle { display: block; margin-top: 4px; }
+  .card .title {
+    margin: 0;
+    display: inline-block;
+    color: #ff5e7e;
+    text-shadow: 0 0 6px #ff5e7e, 0 0 14px #ff5e7e, 3px 3px 0 #1a0e0a;
+    font-size: 36px;
+    letter-spacing: 4px;
+    transform: skewX(-6deg);
+  }
+  .card .subtitle {
+    display: block;
+    margin-top: 4px;
+    color: #4dd4d4;
+    text-shadow: 0 0 8px #4dd4d4;
+    font-size: 11px;
+    letter-spacing: 5px;
+  }
   .card .wheel-wrap {
     position: relative;
     width: 290px;
@@ -55,18 +87,24 @@
   .card canvas { width: 100%; height: 100%; display: block; cursor: pointer; }
   .card .pointer {
     position: absolute;
-    top: 0;
+    top: -2px;
     left: 50%;
     margin-left: -14px;
     width: 0; height: 0;
     border-left: 14px solid transparent;
     border-right: 14px solid transparent;
-    border-top: 26px solid;
+    border-top: 26px solid #ff5e7e;
+    filter: drop-shadow(0 0 6px #ff5e7e);
     z-index: 3;
     pointer-events: none;
   }
   .card .controls { text-align: center; padding: 10px 12px 24px; position: relative; z-index: 2; }
   .card .spin-btn {
+    background: linear-gradient(180deg, #ff5e7e 0%, #cc3a5e 100%);
+    color: #fff;
+    border: 2px solid #ffd84d;
+    box-shadow: 0 0 18px rgba(255, 94, 126, 0.5);
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.4);
     border-radius: 26px;
     padding: 13px 38px;
     font-size: 19px;
@@ -74,253 +112,105 @@
     font-family: inherit;
     cursor: pointer;
     font-weight: 800;
-    border: none;
-  }
-
-  /* === Style 1: Road Trip Neon (current) === */
-  .card.roadtrip {
-    background: radial-gradient(ellipse at top, #2a1f1a 0%, #0d0907 70%);
-    font-family: 'Impact', 'Arial Black', sans-serif;
-  }
-  .card.roadtrip .road-lines {
-    background: repeating-linear-gradient(90deg, #ffd84d 0 30px, transparent 30px 60px);
-    height: 5px;
-    opacity: 0.55;
-  }
-  .card.roadtrip .title {
-    color: #ff5e7e;
-    text-shadow: 0 0 6px #ff5e7e, 0 0 14px #ff5e7e, 3px 3px 0 #1a0e0a;
-    font-size: 36px;
-    letter-spacing: 4px;
-    transform: skewX(-6deg);
-  }
-  .card.roadtrip .subtitle { color: #4dd4d4; text-shadow: 0 0 8px #4dd4d4; font-size: 11px; letter-spacing: 5px; }
-  .card.roadtrip .spin-btn {
-    background: linear-gradient(180deg, #ff5e7e 0%, #cc3a5e 100%);
-    color: #fff;
-    border: 2px solid #ffd84d;
-    box-shadow: 0 0 18px rgba(255, 94, 126, 0.5);
-    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.4);
-  }
-
-  /* === Style 2: Carnival Marquee === */
-  .card.carnival {
-    background: repeating-linear-gradient(180deg, #cc1f2e 0 26px, #f4ead8 26px 52px);
-    font-family: Georgia, 'Times New Roman', serif;
-    color: #4a1010;
-  }
-  .card.carnival .inner {
-    background: #f4ead8;
-    margin: 38px 14px 14px;
-    padding: 14px 12px 18px;
-    border: 3px double #c9a23a;
-    border-radius: 10px;
-    position: relative;
-  }
-  .card.carnival .title {
-    color: #cc1f2e;
-    font-size: 34px;
-    letter-spacing: 1px;
-    font-weight: 900;
-    text-shadow: 2px 2px 0 #c9a23a, 4px 4px 0 rgba(0, 0, 0, 0.15);
-  }
-  .card.carnival .subtitle { color: #c9a23a; font-size: 11px; letter-spacing: 5px; font-style: italic; }
-  .card.carnival .spin-btn {
-    background: linear-gradient(180deg, #cc1f2e, #7a0e1a);
-    color: #ffd84d;
-    border: 3px solid #c9a23a;
-    box-shadow: 0 0 16px rgba(201, 162, 58, 0.55);
-    font-family: Georgia, serif;
-    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.4);
-  }
-
-  /* === Style 3: Game Show 80s === */
-  .card.gameshow {
-    background: linear-gradient(135deg, #08083a 0%, #2a0a5a 100%);
-    font-family: 'Arial Black', 'Impact', sans-serif;
-  }
-  .card.gameshow::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(circle at 20% 25%, rgba(255, 255, 255, 0.06), transparent 50%),
-      radial-gradient(circle at 80% 75%, rgba(255, 255, 255, 0.06), transparent 50%);
-    pointer-events: none;
-  }
-  .card.gameshow .title {
-    background: linear-gradient(180deg, #ffd84d 0%, #ec7547 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    font-size: 40px;
-    letter-spacing: 1px;
-    text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.55);
-    font-weight: 900;
-    transform: scaleY(1.15);
-  }
-  .card.gameshow .subtitle { color: #4dd4ff; font-size: 11px; letter-spacing: 5px; }
-  .card.gameshow .spin-btn {
-    background: linear-gradient(180deg, #ec1c4d 0%, #a01030 100%);
-    color: #fff;
-    border: 4px solid #ffd84d;
-    box-shadow: 0 0 24px rgba(255, 216, 77, 0.45);
-    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.4);
-  }
-
-  /* === Style 4: Synthwave / Vaporwave === */
-  .card.synthwave {
-    background: linear-gradient(180deg, #1a0033 0%, #4a0066 50%, #ff66cc 100%);
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    color: #ffccff;
-    overflow: hidden;
-  }
-  .card.synthwave::before {
-    content: '';
-    position: absolute;
-    left: -10%; right: -10%; bottom: 0;
-    height: 45%;
-    background:
-      linear-gradient(180deg, transparent 0%, #1a0033 95%),
-      repeating-linear-gradient(90deg, transparent 0 30px, #ff66ff 30px 31px),
-      repeating-linear-gradient(0deg, transparent 0 22px, #ff66ff 22px 23px);
-    transform: perspective(120px) rotateX(55deg);
-    transform-origin: bottom;
-    opacity: 0.55;
-    pointer-events: none;
-  }
-  .card.synthwave .title {
-    background: linear-gradient(180deg, #ffccff 0%, #ff66ff 55%, #00ffff 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    font-size: 34px;
-    letter-spacing: 5px;
-    font-weight: 800;
-    filter: drop-shadow(0 0 8px #ff66ff);
-  }
-  .card.synthwave .subtitle { color: #00ffff; text-shadow: 0 0 8px #00ffff; font-size: 11px; letter-spacing: 5px; }
-  .card.synthwave .spin-btn {
-    background: linear-gradient(180deg, #ff66ff, #cc00aa);
-    color: #fff;
-    border: 2px solid #00ffff;
-    box-shadow: 0 0 22px #ff66ff, inset 0 0 12px rgba(0, 255, 255, 0.4);
-    text-shadow: 0 0 6px #fff;
-  }
-
-  /* === Style 5: Candy Pop / Kawaii === */
-  .card.candy {
-    background:
-      radial-gradient(circle at 25% 18%, #ffe4f0 0%, transparent 45%),
-      radial-gradient(circle at 75% 65%, #d4f0ff 0%, transparent 45%),
-      linear-gradient(180deg, #fff5fa 0%, #ffd6e8 100%);
-    font-family: 'Comic Sans MS', 'Chalkboard SE', 'Marker Felt', cursive, sans-serif;
-    color: #6a4a6a;
-  }
-  .card.candy .title {
-    color: #ff85a8;
-    font-size: 36px;
-    letter-spacing: 1px;
-    -webkit-text-stroke: 2px #fff;
-    text-shadow: 4px 4px 0 #d4f0ff;
-    font-weight: 700;
-  }
-  .card.candy .subtitle { color: #b07a9e; font-size: 12px; letter-spacing: 3px; }
-  .card.candy .spin-btn {
-    background: linear-gradient(180deg, #ff85a8, #ff5e88);
-    color: #fff;
-    border: 3px solid #fff;
-    box-shadow: 0 6px 0 #d96080, 0 0 20px rgba(255, 133, 168, 0.45);
-    border-radius: 30px;
-    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2);
   }
 </style>
 </head>
 <body>
 
 <div class="page-header">
-  <h1>Wheel of Fun — Style Mockups</h1>
-  <p>Tap any wheel (or its SPIN button) to preview a spin. Pick a favorite, or tell me which elements you like and we'll mix-and-match.</p>
+  <h1>Wheel of Fun — Wheel Style Mockups</h1>
+  <p>Same page styling — only the wheel design varies. Tap any wheel (or its SPIN button) to preview a spin.</p>
 </div>
 
 <div class="cards">
 
-  <div>
-    <div class="card-label">Style 1 — Road Trip Neon (current)</div>
-    <div class="card roadtrip">
+  <div class="card-wrap">
+    <div class="card-label">Style 1 — Chrome + Dashed Road (current)</div>
+    <div class="card-blurb">Cyan chrome rim glowing, dashed yellow road line outside, gold center star. The look that's live now.</div>
+    <div class="card">
       <div class="road-lines"></div>
       <div class="header">
         <h2 class="title">WHEEL OF FUN</h2>
         <div class="subtitle">&#9733; ROAD TRIP EDITION &#9733;</div>
       </div>
       <div class="wheel-wrap">
-        <div class="pointer" style="border-top-color:#ff5e7e;filter:drop-shadow(0 0 6px #ff5e7e);"></div>
-        <canvas id="wheel-roadtrip" width="400" height="400"></canvas>
+        <div class="pointer"></div>
+        <canvas data-style="chrome" width="400" height="400"></canvas>
       </div>
       <div class="controls"><button class="spin-btn">SPIN</button></div>
       <div class="road-lines"></div>
     </div>
   </div>
 
-  <div>
-    <div class="card-label">Style 2 — Carnival Marquee</div>
-    <div class="card carnival">
-      <div class="inner">
-        <div class="header">
-          <h2 class="title">WHEEL OF FUN</h2>
-          <div class="subtitle">&#9733; STEP RIGHT UP &#9733;</div>
-        </div>
-        <div class="wheel-wrap">
-          <div class="pointer" style="border-top-color:#c9a23a;filter:drop-shadow(0 0 4px #fff);"></div>
-          <canvas id="wheel-carnival" width="400" height="400"></canvas>
-        </div>
-        <div class="controls"><button class="spin-btn">SPIN!</button></div>
-      </div>
-    </div>
-  </div>
-
-  <div>
-    <div class="card-label">Style 3 — Game Show 80s</div>
-    <div class="card gameshow">
-      <div class="header">
-        <h2 class="title">WHEEL OF FUN!</h2>
-        <div class="subtitle">&#9733; PRIZE ROUND &#9733;</div>
-      </div>
-      <div class="wheel-wrap">
-        <div class="pointer" style="border-top-color:#c0c0c0;filter:drop-shadow(0 0 4px #fff);"></div>
-        <canvas id="wheel-gameshow" width="400" height="400"></canvas>
-      </div>
-      <div class="controls"><button class="spin-btn">SPIN</button></div>
-    </div>
-  </div>
-
-  <div>
-    <div class="card-label">Style 4 — Synthwave / Vaporwave</div>
-    <div class="card synthwave">
+  <div class="card-wrap">
+    <div class="card-label">Style 2 — Carnival Lightbulbs</div>
+    <div class="card-blurb">Ring of warm-glow lightbulbs around the rim, classic primary slice colors, red hub with gold star — true Coney Island prize-wheel vibe.</div>
+    <div class="card">
+      <div class="road-lines"></div>
       <div class="header">
         <h2 class="title">WHEEL OF FUN</h2>
-        <div class="subtitle">&#9733; NEON HIGHWAY &#9733;</div>
+        <div class="subtitle">&#9733; ROAD TRIP EDITION &#9733;</div>
       </div>
       <div class="wheel-wrap">
-        <div class="pointer" style="border-top-color:#00ffff;filter:drop-shadow(0 0 8px #00ffff);"></div>
-        <canvas id="wheel-synthwave" width="400" height="400"></canvas>
+        <div class="pointer"></div>
+        <canvas data-style="carnival" width="400" height="400"></canvas>
       </div>
       <div class="controls"><button class="spin-btn">SPIN</button></div>
+      <div class="road-lines"></div>
     </div>
   </div>
 
-  <div>
-    <div class="card-label">Style 5 — Candy Pop / Kawaii</div>
-    <div class="card candy">
+  <div class="card-wrap">
+    <div class="card-label">Style 3 — Gold Filigree (Vintage Prize)</div>
+    <div class="card-blurb">Thick brass rim with shine highlights, jewel-tone slices (emerald, ruby, navy), gold sunburst hub. Antique fairground feel.</div>
+    <div class="card">
+      <div class="road-lines"></div>
       <div class="header">
-        <h2 class="title">Wheel of Fun</h2>
-        <div class="subtitle">&#9733; sweet stops &#9733;</div>
+        <h2 class="title">WHEEL OF FUN</h2>
+        <div class="subtitle">&#9733; ROAD TRIP EDITION &#9733;</div>
       </div>
       <div class="wheel-wrap">
-        <div class="pointer" style="border-top-color:#ff5e88;filter:drop-shadow(0 0 4px #ff5e88);"></div>
-        <canvas id="wheel-candy" width="400" height="400"></canvas>
+        <div class="pointer"></div>
+        <canvas data-style="filigree" width="400" height="400"></canvas>
       </div>
-      <div class="controls"><button class="spin-btn">spin!</button></div>
+      <div class="controls"><button class="spin-btn">SPIN</button></div>
+      <div class="road-lines"></div>
+    </div>
+  </div>
+
+  <div class="card-wrap">
+    <div class="card-label">Style 4 — Neon Sign</div>
+    <div class="card-blurb">Dark slices with each prize's icon glowing in its own neon color. Multicolored neon-pipe rim. Late-night diner sign energy.</div>
+    <div class="card">
+      <div class="road-lines"></div>
+      <div class="header">
+        <h2 class="title">WHEEL OF FUN</h2>
+        <div class="subtitle">&#9733; ROAD TRIP EDITION &#9733;</div>
+      </div>
+      <div class="wheel-wrap">
+        <div class="pointer"></div>
+        <canvas data-style="neon" width="400" height="400"></canvas>
+      </div>
+      <div class="controls"><button class="spin-btn">SPIN</button></div>
+      <div class="road-lines"></div>
+    </div>
+  </div>
+
+  <div class="card-wrap">
+    <div class="card-label">Style 5 — Pin-Striped Carnival</div>
+    <div class="card-blurb">Each slice has diagonal cream pinstripes over its base color — classic county-fair prize-wheel pattern. Thin gold rim with dot studs.</div>
+    <div class="card">
+      <div class="road-lines"></div>
+      <div class="header">
+        <h2 class="title">WHEEL OF FUN</h2>
+        <div class="subtitle">&#9733; ROAD TRIP EDITION &#9733;</div>
+      </div>
+      <div class="wheel-wrap">
+        <div class="pointer"></div>
+        <canvas data-style="striped" width="400" height="400"></canvas>
+      </div>
+      <div class="controls"><button class="spin-btn">SPIN</button></div>
+      <div class="road-lines"></div>
     </div>
   </div>
 
@@ -338,66 +228,16 @@
     { name: 'Ice Cream',  weight: 1, icon: 'icecream', golden: true }
   ];
 
-  const THEMES = {
-    roadtrip: {
-      colors:        ['#4dd4d4', '#ec7547', '#d97acc', '#a36ad9', 'gold'],
-      rim:           '#4dd4d4',
-      rimGlow:       true,
-      dashedOuter:   '#ffd84d',
-      hub:           'gold',
-      hubStar:       '#1a1410',
-      iconStroke:    '#f4ead8',
-      iconStrokeGolden: '#5a4515',
-      sliceBorder:   '#1a1410'
-    },
-    carnival: {
-      colors:        ['#cc1f2e', '#f4ead8', '#ffd84d', '#5b9bd5', 'gold'],
-      rim:           '#c9a23a',
-      rimGlow:       false,
-      rimBulbs:      true,
-      hub:           '#cc1f2e',
-      hubStar:       '#ffd84d',
-      iconStroke:    '#1a1410',
-      iconStrokeGolden: '#5a4515',
-      sliceBorder:   '#c9a23a'
-    },
-    gameshow: {
-      colors:        ['#ec1c4d', '#ffd84d', '#1ec5d4', '#7ab87a', 'gold'],
-      rim:           '#e6e6e6',
-      rimGlow:       true,
-      rimColor2:     '#ffd84d',
-      hub:           '#e6e6e6',
-      hubStar:       '#0a0a3a',
-      iconStroke:    '#0a0a3a',
-      iconStrokeGolden: '#5a4515',
-      sliceBorder:   '#0a0a3a'
-    },
-    synthwave: {
-      colors:        ['#ff00cc', '#00ffff', '#9933ff', '#ff66aa', 'gold'],
-      rim:           '#ff00ff',
-      rimGlow:       true,
-      dashedOuter:   '#00ffff',
-      hub:           '#1a0033',
-      hubStar:       '#00ffff',
-      iconStroke:    '#ffffff',
-      iconStrokeGolden: '#5a4515',
-      sliceBorder:   '#1a0033'
-    },
-    candy: {
-      colors:        ['#aee0ff', '#ffd6c0', '#ffc0d6', '#d8c0ff', 'gold'],
-      rim:           '#ffffff',
-      rimGlow:       false,
-      dashedOuter:   '#ffa5c8',
-      hub:           '#ffffff',
-      hubStar:       '#ff85a8',
-      iconStroke:    '#6a4a6a',
-      iconStrokeGolden: '#5a4515',
-      sliceBorder:   '#ffffff',
-      sliceBorderWidth: 4
-    }
+  // ---- Per-style palettes ----
+  const PALETTES = {
+    chrome:   ['#4dd4d4', '#ec7547', '#d97acc', '#a36ad9'],
+    carnival: ['#d94f4f', '#f4ead8', '#5b9bd5', '#ffd84d'],
+    filigree: ['#1f7a3f', '#a8222a', '#1f3a78', '#c97c2c'],
+    neon:     ['#00e6ff', '#ff6b35', '#ff3ec9', '#9b6bff'],
+    striped:  ['#d94f4f', '#5b9bd5', '#7ab87a', '#d97acc']
   };
 
-  // ---- Outline icons (same shapes as the app) ----
+  // ---- Outline icons ----
   function drawIcon(ctx, name) {
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
@@ -412,8 +252,7 @@
   }
   function drawDrink(ctx) {
     ctx.beginPath();
-    ctx.moveTo(-15, -14); ctx.lineTo(15, -14); ctx.lineTo(12, 18); ctx.lineTo(-12, 18); ctx.closePath();
-    ctx.stroke();
+    ctx.moveTo(-15, -14); ctx.lineTo(15, -14); ctx.lineTo(12, 18); ctx.lineTo(-12, 18); ctx.closePath(); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(-17, -14); ctx.lineTo(17, -14); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(4, -14); ctx.lineTo(11, -28); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(-10, 2); ctx.lineTo(10, 2); ctx.stroke();
@@ -447,8 +286,7 @@
   }
   function drawIceCream(ctx) {
     ctx.beginPath();
-    ctx.moveTo(-14, -2); ctx.lineTo(14, -2); ctx.lineTo(0, 22); ctx.closePath();
-    ctx.stroke();
+    ctx.moveTo(-14, -2); ctx.lineTo(14, -2); ctx.lineTo(0, 22); ctx.closePath(); ctx.stroke();
     ctx.save();
     ctx.beginPath();
     ctx.moveTo(-14, -2); ctx.lineTo(14, -2); ctx.lineTo(0, 22); ctx.closePath();
@@ -464,155 +302,445 @@
     ctx.beginPath(); ctx.arc(0, -18, 4, 0, Math.PI * 2); ctx.stroke();
   }
 
-  // ---- Wheel renderer (theme-driven) ----
-  function drawWheel(canvas, theme, rotation) {
-    rotation = rotation || 0;
+  // ---- Helpers ----
+  function goldGradient(ctx, R) {
+    const g = ctx.createRadialGradient(0, 0, R * 0.1, 0, 0, R);
+    g.addColorStop(0,    '#fff5b8');
+    g.addColorStop(0.55, '#ffd84d');
+    g.addColorStop(1,    '#b8902a');
+    return g;
+  }
+  function sliceGeometry(R) {
+    const total = SLICES.reduce((s, a) => s + a.weight, 0);
+    const out = [];
+    let start = -Math.PI / 2;
+    SLICES.forEach((s) => {
+      const sliceAngle = (s.weight / total) * Math.PI * 2;
+      out.push({ slice: s, start: start, end: start + sliceAngle, mid: start + sliceAngle / 2, angle: sliceAngle });
+      start += sliceAngle;
+    });
+    return out;
+  }
+
+  // ---- Shared icon placement on a single slice ----
+  function placeIcon(ctx, slc, R, iconStroke, iconStrokeGolden, options) {
+    options = options || {};
+    ctx.save();
+    ctx.rotate(slc.mid + Math.PI / 2);
+    const iconR = slc.angle < 0.9 ? R * 0.62 : R * 0.55;
+    ctx.translate(0, -iconR);
+    const scale = slc.angle < 0.7 ? 1.0 : 1.35;
+    ctx.scale(scale, scale);
+    if (slc.slice.golden) {
+      ctx.strokeStyle = iconStrokeGolden;
+    } else {
+      ctx.strokeStyle = iconStroke;
+    }
+    if (options.iconGlow) {
+      ctx.shadowColor = options.iconGlow;
+      ctx.shadowBlur = options.iconGlowBlur || 8;
+    }
+    drawIcon(ctx, slc.slice.icon);
+    ctx.restore();
+  }
+
+  // ============================================================
+  // STYLE 1: Chrome + dashed road (current)
+  // ============================================================
+  function drawChrome(canvas, rotation) {
     const ctx = canvas.getContext('2d');
     const W = canvas.width, H = canvas.height;
     const cx = W / 2, cy = H / 2;
     const R = Math.min(W, H) / 2 - 22;
-
+    const palette = PALETTES.chrome;
     ctx.clearRect(0, 0, W, H);
 
-    const total = SLICES.reduce((s, a) => s + a.weight, 0);
-
     ctx.save();
     ctx.translate(cx, cy);
-    ctx.rotate(rotation);
-
-    let start = -Math.PI / 2;
-    SLICES.forEach((s, i) => {
-      const sliceAngle = (s.weight / total) * Math.PI * 2;
-      const end = start + sliceAngle;
-      const mid = start + sliceAngle / 2;
-
+    ctx.rotate(rotation || 0);
+    sliceGeometry(R).forEach((slc, i) => {
       ctx.beginPath();
       ctx.moveTo(0, 0);
-      ctx.arc(0, 0, R, start, end);
+      ctx.arc(0, 0, R, slc.start, slc.end);
       ctx.closePath();
-      if (s.golden) {
-        const g = ctx.createRadialGradient(0, 0, R * 0.1, 0, 0, R);
-        g.addColorStop(0,   '#fff5b8');
-        g.addColorStop(0.55,'#ffd84d');
-        g.addColorStop(1,   '#b8902a');
-        ctx.fillStyle = g;
-      } else {
-        ctx.fillStyle = theme.colors[i];
-      }
+      ctx.fillStyle = slc.slice.golden ? goldGradient(ctx, R) : palette[i];
       ctx.fill();
-
-      ctx.strokeStyle = theme.sliceBorder;
-      ctx.lineWidth = theme.sliceBorderWidth || 2.5;
-      ctx.stroke();
-
-      // Icon
-      ctx.save();
-      ctx.rotate(mid + Math.PI / 2);
-      const iconR = sliceAngle < 0.9 ? R * 0.62 : R * 0.55;
-      ctx.translate(0, -iconR);
-      const scale = sliceAngle < 0.7 ? 1.0 : 1.35;
-      ctx.scale(scale, scale);
-      ctx.strokeStyle = s.golden ? theme.iconStrokeGolden : (theme.iconStroke || '#1a1410');
-      drawIcon(ctx, s.icon);
-      ctx.restore();
-
-      start = end;
-    });
-
-    ctx.restore();
-
-    // Outer rings + hub (static, not rotating)
-    ctx.save();
-    ctx.translate(cx, cy);
-
-    // Main rim
-    ctx.beginPath();
-    ctx.arc(0, 0, R, 0, Math.PI * 2);
-    ctx.strokeStyle = theme.rim;
-    ctx.lineWidth = 7;
-    if (theme.rimGlow) { ctx.shadowColor = theme.rim; ctx.shadowBlur = 12; }
-    ctx.stroke();
-    ctx.shadowBlur = 0;
-
-    // Second rim layer (game show double-ring)
-    if (theme.rimColor2) {
-      ctx.beginPath();
-      ctx.arc(0, 0, R - 5, 0, Math.PI * 2);
-      ctx.strokeStyle = theme.rimColor2;
+      ctx.strokeStyle = '#1a1410';
       ctx.lineWidth = 3;
       ctx.stroke();
-    }
+      placeIcon(ctx, slc, R, '#f4ead8', '#5a4515');
+    });
+    ctx.restore();
 
-    // Carnival lightbulbs
-    if (theme.rimBulbs) {
-      const N = 22;
-      for (let i = 0; i < N; i++) {
-        const ang = (i / N) * Math.PI * 2;
-        const bx = Math.cos(ang) * (R + 11);
-        const by = Math.sin(ang) * (R + 11);
-        ctx.beginPath();
-        ctx.arc(bx, by, 3.6, 0, Math.PI * 2);
-        ctx.fillStyle = i % 2 ? '#ffd84d' : '#fff5e8';
-        ctx.shadowColor = '#ffd84d';
-        ctx.shadowBlur = 8;
-        ctx.fill();
-      }
-      ctx.shadowBlur = 0;
-    }
-
-    // Dashed outer line
-    if (theme.dashedOuter) {
-      ctx.beginPath();
-      ctx.arc(0, 0, R + 10, 0, Math.PI * 2);
-      ctx.setLineDash([12, 8]);
-      ctx.strokeStyle = theme.dashedOuter;
-      ctx.lineWidth = 2.5;
-      ctx.stroke();
-      ctx.setLineDash([]);
-    }
-
+    ctx.save();
+    ctx.translate(cx, cy);
+    // Chrome rim
+    ctx.beginPath();
+    ctx.arc(0, 0, R, 0, Math.PI * 2);
+    ctx.strokeStyle = '#4dd4d4';
+    ctx.lineWidth = 8;
+    ctx.shadowColor = '#4dd4d4';
+    ctx.shadowBlur = 14;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+    // Dashed outer road line
+    ctx.beginPath();
+    ctx.arc(0, 0, R + 10, 0, Math.PI * 2);
+    ctx.setLineDash([12, 8]);
+    ctx.strokeStyle = '#ffd84d';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+    ctx.setLineDash([]);
     // Hub
     ctx.beginPath();
     ctx.arc(0, 0, 32, 0, Math.PI * 2);
-    if (theme.hub === 'gold') {
-      const g = ctx.createRadialGradient(0, 0, 3, 0, 0, 32);
-      g.addColorStop(0, '#ffd84d');
-      g.addColorStop(1, '#b8902a');
-      ctx.fillStyle = g;
-    } else {
-      ctx.fillStyle = theme.hub;
-    }
+    ctx.fillStyle = goldGradient(ctx, 32);
     ctx.fill();
-    ctx.strokeStyle = theme.sliceBorder;
+    ctx.strokeStyle = '#1a1410';
     ctx.lineWidth = 2;
     ctx.stroke();
-
-    // Star on hub
-    ctx.fillStyle = theme.hubStar;
-    ctx.font = 'bold 28px "Arial Black", Impact, sans-serif';
+    ctx.fillStyle = '#1a1410';
+    ctx.font = 'bold 28px "Arial Black", sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText('★', 0, 2);
-
     ctx.restore();
   }
 
-  // ---- Setup: render each wheel and wire taps for quick demo spins ----
-  const WHEELS = {
-    roadtrip:  'wheel-roadtrip',
-    carnival:  'wheel-carnival',
-    gameshow:  'wheel-gameshow',
-    synthwave: 'wheel-synthwave',
-    candy:     'wheel-candy'
+  // ============================================================
+  // STYLE 2: Carnival lightbulbs
+  // ============================================================
+  function drawCarnival(canvas, rotation) {
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    const cx = W / 2, cy = H / 2;
+    const R = Math.min(W, H) / 2 - 24;
+    const palette = PALETTES.carnival;
+    ctx.clearRect(0, 0, W, H);
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(rotation || 0);
+    sliceGeometry(R).forEach((slc, i) => {
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.arc(0, 0, R, slc.start, slc.end);
+      ctx.closePath();
+      ctx.fillStyle = slc.slice.golden ? goldGradient(ctx, R) : palette[i];
+      ctx.fill();
+      ctx.strokeStyle = '#1a1410';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      placeIcon(ctx, slc, R, '#1a1410', '#5a4515');
+    });
+    ctx.restore();
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    // Inner gold rim
+    ctx.beginPath();
+    ctx.arc(0, 0, R, 0, Math.PI * 2);
+    ctx.strokeStyle = '#c9a23a';
+    ctx.lineWidth = 5;
+    ctx.stroke();
+    // Lightbulb ring
+    const N = 24;
+    for (let i = 0; i < N; i++) {
+      const ang = (i / N) * Math.PI * 2;
+      const bx = Math.cos(ang) * (R + 12);
+      const by = Math.sin(ang) * (R + 12);
+      ctx.beginPath();
+      ctx.arc(bx, by, 5, 0, Math.PI * 2);
+      ctx.fillStyle = i % 2 ? '#ffd84d' : '#fff5e8';
+      ctx.shadowColor = '#ffd84d';
+      ctx.shadowBlur = 12;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.strokeStyle = '#8a6a1a';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+    // Hub: red with gold star
+    ctx.beginPath();
+    ctx.arc(0, 0, 32, 0, Math.PI * 2);
+    ctx.fillStyle = '#cc1f2e';
+    ctx.fill();
+    ctx.strokeStyle = '#c9a23a';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.fillStyle = '#ffd84d';
+    ctx.font = 'bold 28px "Arial Black", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('★', 0, 2);
+    ctx.restore();
+  }
+
+  // ============================================================
+  // STYLE 3: Gold filigree / vintage prize
+  // ============================================================
+  function drawFiligree(canvas, rotation) {
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    const cx = W / 2, cy = H / 2;
+    const R = Math.min(W, H) / 2 - 26;
+    const palette = PALETTES.filigree;
+    ctx.clearRect(0, 0, W, H);
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(rotation || 0);
+    sliceGeometry(R).forEach((slc, i) => {
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.arc(0, 0, R, slc.start, slc.end);
+      ctx.closePath();
+      ctx.fillStyle = slc.slice.golden ? goldGradient(ctx, R) : palette[i];
+      ctx.fill();
+      ctx.strokeStyle = '#c9a23a';
+      ctx.lineWidth = 4;
+      ctx.stroke();
+      placeIcon(ctx, slc, R, '#f4ead8', '#5a4515');
+    });
+    ctx.restore();
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    // Triple-ring brass rim: dark gold, light gold, dark gold
+    ctx.beginPath(); ctx.arc(0, 0, R + 4, 0, Math.PI * 2);
+    ctx.strokeStyle = '#7a5816'; ctx.lineWidth = 4; ctx.stroke();
+    ctx.beginPath(); ctx.arc(0, 0, R, 0, Math.PI * 2);
+    ctx.strokeStyle = '#ffe48a'; ctx.lineWidth = 5; ctx.stroke();
+    ctx.beginPath(); ctx.arc(0, 0, R - 4, 0, Math.PI * 2);
+    ctx.strokeStyle = '#c9a23a'; ctx.lineWidth = 3; ctx.stroke();
+    // Brass studs around outer rim
+    const N = 16;
+    for (let i = 0; i < N; i++) {
+      const ang = (i / N) * Math.PI * 2;
+      const bx = Math.cos(ang) * (R + 4);
+      const by = Math.sin(ang) * (R + 4);
+      ctx.beginPath();
+      ctx.arc(bx, by, 2.5, 0, Math.PI * 2);
+      ctx.fillStyle = '#5a4015';
+      ctx.fill();
+    }
+    // Sunburst hub: lines radiating from center
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(0, 0, 56, 0, Math.PI * 2);
+    ctx.clip();
+    ctx.strokeStyle = 'rgba(201, 162, 58, 0.55)';
+    ctx.lineWidth = 2;
+    const rays = 24;
+    for (let i = 0; i < rays; i++) {
+      const a = (i / rays) * Math.PI * 2;
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(Math.cos(a) * 56, Math.sin(a) * 56);
+      ctx.stroke();
+    }
+    ctx.restore();
+    // Hub disc
+    ctx.beginPath();
+    ctx.arc(0, 0, 34, 0, Math.PI * 2);
+    ctx.fillStyle = goldGradient(ctx, 34);
+    ctx.fill();
+    ctx.strokeStyle = '#7a5816';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.fillStyle = '#5a4015';
+    ctx.font = 'bold 30px "Arial Black", serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('★', 0, 2);
+    ctx.restore();
+  }
+
+  // ============================================================
+  // STYLE 4: Neon sign
+  // ============================================================
+  function drawNeon(canvas, rotation) {
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    const cx = W / 2, cy = H / 2;
+    const R = Math.min(W, H) / 2 - 26;
+    const palette = PALETTES.neon;
+    ctx.clearRect(0, 0, W, H);
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(rotation || 0);
+    sliceGeometry(R).forEach((slc, i) => {
+      const color = slc.slice.golden ? '#ffd84d' : palette[i];
+      // Dark slice fill
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.arc(0, 0, R, slc.start, slc.end);
+      ctx.closePath();
+      if (slc.slice.golden) {
+        ctx.fillStyle = goldGradient(ctx, R);
+      } else {
+        ctx.fillStyle = '#160a18';
+      }
+      ctx.fill();
+      // Glowing neon divider per-slice
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 3;
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 14;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+      // Icon in the slice's neon color, glowing
+      placeIcon(ctx, slc, R, color, '#5a4515', { iconGlow: color, iconGlowBlur: 12 });
+    });
+    ctx.restore();
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    // Multicolored neon rim segments matching each slice
+    sliceGeometry(R).forEach((slc, i) => {
+      const color = slc.slice.golden ? '#ffd84d' : palette[i];
+      ctx.beginPath();
+      ctx.arc(0, 0, R, slc.start + (rotation || 0), slc.end + (rotation || 0));
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 6;
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 14;
+      ctx.stroke();
+    });
+    ctx.shadowBlur = 0;
+    // Hub: dark with intense magenta ring
+    ctx.beginPath();
+    ctx.arc(0, 0, 38, 0, Math.PI * 2);
+    ctx.strokeStyle = '#ff3ec9';
+    ctx.lineWidth = 4;
+    ctx.shadowColor = '#ff3ec9';
+    ctx.shadowBlur = 16;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+    ctx.beginPath();
+    ctx.arc(0, 0, 34, 0, Math.PI * 2);
+    ctx.fillStyle = '#160a18';
+    ctx.fill();
+    ctx.fillStyle = '#00e6ff';
+    ctx.shadowColor = '#00e6ff';
+    ctx.shadowBlur = 12;
+    ctx.font = 'bold 28px "Arial Black", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('★', 0, 2);
+    ctx.shadowBlur = 0;
+    ctx.restore();
+  }
+
+  // ============================================================
+  // STYLE 5: Pin-striped carnival
+  // ============================================================
+  function drawStriped(canvas, rotation) {
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    const cx = W / 2, cy = H / 2;
+    const R = Math.min(W, H) / 2 - 22;
+    const palette = PALETTES.striped;
+    ctx.clearRect(0, 0, W, H);
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(rotation || 0);
+    sliceGeometry(R).forEach((slc, i) => {
+      // Base color fill
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.arc(0, 0, R, slc.start, slc.end);
+      ctx.closePath();
+      ctx.fillStyle = slc.slice.golden ? goldGradient(ctx, R) : palette[i];
+      ctx.fill();
+      // Cream pinstripes clipped to the slice
+      if (!slc.slice.golden) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.arc(0, 0, R, slc.start, slc.end);
+        ctx.closePath();
+        ctx.clip();
+        // Rotate stripes to be perpendicular to slice mid
+        ctx.rotate(slc.mid + Math.PI / 2);
+        ctx.strokeStyle = 'rgba(244, 234, 216, 0.55)';
+        ctx.lineWidth = 5;
+        for (let x = -R; x <= R; x += 14) {
+          ctx.beginPath();
+          ctx.moveTo(x, -R);
+          ctx.lineTo(x, R);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+      ctx.strokeStyle = '#1a1410';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.arc(0, 0, R, slc.start, slc.end);
+      ctx.closePath();
+      ctx.stroke();
+      placeIcon(ctx, slc, R, '#1a1410', '#5a4515');
+    });
+    ctx.restore();
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    // Thin gold rim
+    ctx.beginPath();
+    ctx.arc(0, 0, R, 0, Math.PI * 2);
+    ctx.strokeStyle = '#c9a23a';
+    ctx.lineWidth = 4;
+    ctx.stroke();
+    // White dot studs just inside rim
+    const N = 28;
+    for (let i = 0; i < N; i++) {
+      const ang = (i / N) * Math.PI * 2;
+      const bx = Math.cos(ang) * (R - 12);
+      const by = Math.sin(ang) * (R - 12);
+      ctx.beginPath();
+      ctx.arc(bx, by, 2.5, 0, Math.PI * 2);
+      ctx.fillStyle = '#f4ead8';
+      ctx.fill();
+    }
+    // Red dome hub with gold star
+    ctx.beginPath();
+    ctx.arc(0, 0, 34, 0, Math.PI * 2);
+    const hubG = ctx.createRadialGradient(-8, -8, 4, 0, 0, 34);
+    hubG.addColorStop(0, '#ff7a7a');
+    hubG.addColorStop(1, '#a01818');
+    ctx.fillStyle = hubG;
+    ctx.fill();
+    ctx.strokeStyle = '#c9a23a';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.fillStyle = '#ffd84d';
+    ctx.font = 'bold 30px "Arial Black", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('★', 0, 2);
+    ctx.restore();
+  }
+
+  // ---- Dispatcher ----
+  const RENDERERS = {
+    chrome:   drawChrome,
+    carnival: drawCarnival,
+    filigree: drawFiligree,
+    neon:     drawNeon,
+    striped:  drawStriped
   };
 
-  Object.keys(WHEELS).forEach(key => {
-    const canvas = document.getElementById(WHEELS[key]);
-    const theme = THEMES[key];
+  // ---- Wire each canvas: initial render + tappable demo spin ----
+  document.querySelectorAll('canvas[data-style]').forEach(canvas => {
+    const style = canvas.dataset.style;
+    const render = RENDERERS[style];
     let rot = 0;
     let spinning = false;
 
-    drawWheel(canvas, theme, rot);
+    render(canvas, rot);
 
     function demoSpin() {
       if (spinning) return;
@@ -626,7 +754,7 @@
         const t = Math.min(1, (now - t0) / duration);
         const eased = 1 - Math.pow(1 - t, 3);
         rot = startRot + (targetRot - startRot) * eased;
-        drawWheel(canvas, theme, rot);
+        render(canvas, rot);
         if (t < 1) requestAnimationFrame(frame);
         else { rot = targetRot; spinning = false; }
       }
