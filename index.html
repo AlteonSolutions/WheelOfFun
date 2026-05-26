@@ -173,10 +173,11 @@
     display: inline-block;
   }
   @keyframes celebrate {
-    0%   { transform: scale(0.2) rotate(-12deg); opacity: 0; }
-    55%  { transform: scale(1.35) rotate(6deg);  opacity: 1; }
-    78%  { transform: scale(0.94) rotate(-3deg); }
-    100% { transform: scale(1) rotate(0);        opacity: 1; }
+    0%   { transform: scale(0.15) rotate(-18deg); opacity: 0; }
+    45%  { transform: scale(1.6)  rotate(10deg);  opacity: 1; }
+    65%  { transform: scale(0.88) rotate(-5deg); }
+    82%  { transform: scale(1.12) rotate(3deg); }
+    100% { transform: scale(1)    rotate(0);      opacity: 1; }
   }
   @keyframes celebrate-bg {
     0%   { box-shadow: 0 0 0 rgba(255, 216, 77, 0); }
@@ -606,6 +607,8 @@
       resultEl.querySelector('.result-text').textContent = '★ ICE CREAM! ★';
       launchConfetti();
       celebrateSound();
+      setTimeout(launchIceCreamCascade, 250);
+      setTimeout(launchConfetti, 1200);
     } else {
       resultEl.classList.remove('golden');
       resultEl.querySelector('.result-text').textContent = s.name;
@@ -680,11 +683,101 @@
   window.addEventListener('resize', sizeConfetti);
 
   let confettiParticles = [];
+  let coneParticles = [];
   let confettiAnimating = false;
   const CONFETTI_COLORS = [
     '#ff5e7e', '#ffd84d', '#4dd4d4', '#7ab87a',
     '#d97acc', '#ec7547', '#a36ad9', '#fff5b8'
   ];
+  const ICECREAM_FLAVORS = [
+    { scoop: '#ffb3c1', cone: '#c97c5d' }, // strawberry
+    { scoop: '#a8e6cf', cone: '#c97c5d' }, // mint
+    { scoop: '#8b5a2b', cone: '#c97c5d' }, // chocolate
+    { scoop: '#fff5d6', cone: '#c97c5d' }, // vanilla
+    { scoop: '#d4a5e8', cone: '#c97c5d' }, // grape
+    { scoop: '#ff9b59', cone: '#c97c5d' }  // orange sherbet
+  ];
+
+  function launchIceCreamCascade() {
+    const w = confettiCanvas.width;
+    const N = 38;
+    for (let i = 0; i < N; i++) {
+      setTimeout(() => {
+        const flavor = ICECREAM_FLAVORS[Math.floor(Math.random() * ICECREAM_FLAVORS.length)];
+        coneParticles.push({
+          x: Math.random() * w,
+          y: -60 - Math.random() * 40,
+          vx: (Math.random() - 0.5) * 2.2,
+          vy: 1.2 + Math.random() * 2.4,
+          rot: (Math.random() - 0.5) * 0.5,
+          vRot: (Math.random() - 0.5) * 0.06,
+          wob: Math.random() * Math.PI * 2,
+          wobSpeed: 0.04 + Math.random() * 0.04,
+          size: 0.75 + Math.random() * 0.75,
+          scoopColor: flavor.scoop,
+          coneColor: flavor.cone,
+          life: 0,
+          alpha: 1
+        });
+        if (!confettiAnimating) {
+          confettiAnimating = true;
+          requestAnimationFrame(stepConfetti);
+        }
+      }, i * 55);
+    }
+  }
+
+  function drawConeParticle(p) {
+    cctx.save();
+    cctx.translate(p.x, p.y);
+    cctx.rotate(p.rot);
+    cctx.scale(p.size, p.size);
+    cctx.globalAlpha = Math.max(0, p.alpha);
+    cctx.strokeStyle = '#1a1410';
+    cctx.lineWidth = 2;
+    cctx.lineJoin = 'round';
+    // Cone (triangle)
+    cctx.fillStyle = p.coneColor;
+    cctx.beginPath();
+    cctx.moveTo(-14, -2);
+    cctx.lineTo(14, -2);
+    cctx.lineTo(0, 22);
+    cctx.closePath();
+    cctx.fill();
+    cctx.stroke();
+    // Crosshatch on cone
+    cctx.save();
+    cctx.beginPath();
+    cctx.moveTo(-14, -2); cctx.lineTo(14, -2); cctx.lineTo(0, 22); cctx.closePath();
+    cctx.clip();
+    cctx.strokeStyle = 'rgba(26,20,16,0.4)';
+    cctx.lineWidth = 1;
+    for (let i = -16; i <= 16; i += 5) {
+      cctx.beginPath();
+      cctx.moveTo(i, -2); cctx.lineTo(i + 10, 22); cctx.stroke();
+      cctx.beginPath();
+      cctx.moveTo(i, -2); cctx.lineTo(i - 10, 22); cctx.stroke();
+    }
+    cctx.restore();
+    // Scoop
+    cctx.strokeStyle = '#1a1410';
+    cctx.lineWidth = 2;
+    cctx.fillStyle = p.scoopColor;
+    cctx.beginPath();
+    cctx.arc(0, -2, 14, Math.PI, 0);
+    cctx.lineTo(14, -2);
+    cctx.lineTo(-14, -2);
+    cctx.closePath();
+    cctx.fill();
+    cctx.stroke();
+    // Cherry
+    cctx.fillStyle = '#d94f4f';
+    cctx.beginPath();
+    cctx.arc(0, -18, 3.5, 0, Math.PI * 2);
+    cctx.fill();
+    cctx.stroke();
+    cctx.restore();
+  }
 
   function launchConfetti() {
     const wheelEl = document.querySelector('.wheel');
@@ -738,7 +831,21 @@
       cctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
       cctx.restore();
     }
-    if (confettiParticles.length > 0) {
+    for (let i = coneParticles.length - 1; i >= 0; i--) {
+      const p = coneParticles[i];
+      p.vy += 0.18;
+      p.wob += p.wobSpeed;
+      p.x += p.vx + Math.sin(p.wob) * 0.6;
+      p.y += p.vy;
+      p.rot += p.vRot;
+      p.life += 1;
+      if (p.y > confettiCanvas.height + 80) {
+        coneParticles.splice(i, 1);
+        continue;
+      }
+      drawConeParticle(p);
+    }
+    if (confettiParticles.length > 0 || coneParticles.length > 0) {
       requestAnimationFrame(stepConfetti);
     } else {
       confettiAnimating = false;
