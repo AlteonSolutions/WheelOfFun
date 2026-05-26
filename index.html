@@ -683,7 +683,7 @@
   window.addEventListener('resize', sizeConfetti);
 
   let confettiParticles = [];
-  let coneParticles = [];
+  let treatParticles = [];
   let confettiAnimating = false;
   const CONFETTI_COLORS = [
     '#ff5e7e', '#ffd84d', '#4dd4d4', '#7ab87a',
@@ -697,46 +697,69 @@
     { scoop: '#d4a5e8', cone: '#c97c5d' }, // grape
     { scoop: '#ff9b59', cone: '#c97c5d' }  // orange sherbet
   ];
+  const POPSICLE_COLORS = [
+    '#ff5e7e', '#ff9b59', '#5b9bd5', '#7ab87a', '#d4a5e8', '#ffd84d'
+  ];
+  // Weighted treat-type pool (cone has the highest share since it's the prize)
+  const TREAT_POOL = [
+    'cone', 'cone', 'cone', 'cone',
+    'sundae', 'sundae', 'sundae',
+    'milkshake', 'milkshake',
+    'popsicle', 'popsicle'
+  ];
 
   function launchIceCreamCascade() {
     const w = confettiCanvas.width;
-    const N = 38;
+    const N = 55;
     for (let i = 0; i < N; i++) {
       setTimeout(() => {
-        const flavor = ICECREAM_FLAVORS[Math.floor(Math.random() * ICECREAM_FLAVORS.length)];
-        coneParticles.push({
+        const type = TREAT_POOL[Math.floor(Math.random() * TREAT_POOL.length)];
+        const f1 = ICECREAM_FLAVORS[Math.floor(Math.random() * ICECREAM_FLAVORS.length)];
+        const f2 = ICECREAM_FLAVORS[Math.floor(Math.random() * ICECREAM_FLAVORS.length)];
+        treatParticles.push({
+          type: type,
           x: Math.random() * w,
-          y: -60 - Math.random() * 40,
-          vx: (Math.random() - 0.5) * 2.2,
-          vy: 1.2 + Math.random() * 2.4,
-          rot: (Math.random() - 0.5) * 0.5,
-          vRot: (Math.random() - 0.5) * 0.06,
+          y: -90 - Math.random() * 60,
+          vx: (Math.random() - 0.5) * 1.6,
+          vy: 0.4 + Math.random() * 1.2,
+          rot: (Math.random() - 0.5) * 0.4,
+          vRot: (Math.random() - 0.5) * 0.04,
           wob: Math.random() * Math.PI * 2,
-          wobSpeed: 0.04 + Math.random() * 0.04,
-          size: 0.75 + Math.random() * 0.75,
-          scoopColor: flavor.scoop,
-          coneColor: flavor.cone,
-          life: 0,
-          alpha: 1
+          wobSpeed: 0.025 + Math.random() * 0.03,
+          size: 1.35 + Math.random() * 1.05,
+          scoopColor: f1.scoop,
+          scoop2Color: f2.scoop,
+          coneColor: f1.cone,
+          popColor: POPSICLE_COLORS[Math.floor(Math.random() * POPSICLE_COLORS.length)]
         });
         if (!confettiAnimating) {
           confettiAnimating = true;
           requestAnimationFrame(stepConfetti);
         }
-      }, i * 55);
+      }, i * 65);
     }
   }
 
-  function drawConeParticle(p) {
+  function drawTreatParticle(p) {
     cctx.save();
     cctx.translate(p.x, p.y);
     cctx.rotate(p.rot);
     cctx.scale(p.size, p.size);
-    cctx.globalAlpha = Math.max(0, p.alpha);
     cctx.strokeStyle = '#1a1410';
     cctx.lineWidth = 2;
     cctx.lineJoin = 'round';
-    // Cone (triangle)
+    cctx.lineCap = 'round';
+    switch (p.type) {
+      case 'cone':      drawConeShape(p);      break;
+      case 'milkshake': drawMilkshakeShape(p); break;
+      case 'sundae':    drawSundaeShape(p);    break;
+      case 'popsicle':  drawPopsicleShape(p);  break;
+    }
+    cctx.restore();
+  }
+
+  function drawConeShape(p) {
+    // Cone
     cctx.fillStyle = p.coneColor;
     cctx.beginPath();
     cctx.moveTo(-14, -2);
@@ -745,12 +768,12 @@
     cctx.closePath();
     cctx.fill();
     cctx.stroke();
-    // Crosshatch on cone
+    // Crosshatch
     cctx.save();
     cctx.beginPath();
     cctx.moveTo(-14, -2); cctx.lineTo(14, -2); cctx.lineTo(0, 22); cctx.closePath();
     cctx.clip();
-    cctx.strokeStyle = 'rgba(26,20,16,0.4)';
+    cctx.strokeStyle = 'rgba(26,20,16,0.35)';
     cctx.lineWidth = 1;
     for (let i = -16; i <= 16; i += 5) {
       cctx.beginPath();
@@ -776,7 +799,122 @@
     cctx.arc(0, -18, 3.5, 0, Math.PI * 2);
     cctx.fill();
     cctx.stroke();
+  }
+
+  function drawMilkshakeShape(p) {
+    // Glass with curved sides
+    cctx.fillStyle = p.scoopColor;
+    cctx.beginPath();
+    cctx.moveTo(-15, -10);
+    cctx.bezierCurveTo(-13, 4, -11, 12, -9, 22);
+    cctx.lineTo(9, 22);
+    cctx.bezierCurveTo(11, 12, 13, 4, 15, -10);
+    cctx.closePath();
+    cctx.fill();
+    cctx.stroke();
+    // Glass rim line
+    cctx.beginPath();
+    cctx.moveTo(-15, -10);
+    cctx.lineTo(15, -10);
+    cctx.stroke();
+    // Whipped cream dome
+    cctx.fillStyle = '#fff5e8';
+    cctx.beginPath();
+    cctx.moveTo(-14, -10);
+    cctx.quadraticCurveTo(-11, -22, -5, -16);
+    cctx.quadraticCurveTo(-1, -24, 4, -16);
+    cctx.quadraticCurveTo(10, -22, 14, -10);
+    cctx.closePath();
+    cctx.fill();
+    cctx.stroke();
+    // Straw
+    cctx.save();
+    cctx.strokeStyle = '#ec7547';
+    cctx.lineWidth = 3;
+    cctx.beginPath();
+    cctx.moveTo(5, -12);
+    cctx.lineTo(13, -28);
+    cctx.stroke();
     cctx.restore();
+    // Cherry on top
+    cctx.fillStyle = '#d94f4f';
+    cctx.beginPath();
+    cctx.arc(-3, -20, 3.5, 0, Math.PI * 2);
+    cctx.fill();
+    cctx.stroke();
+  }
+
+  function drawSundaeShape(p) {
+    // Bowl (lower half-ellipse)
+    cctx.fillStyle = '#e8d4a8';
+    cctx.beginPath();
+    cctx.moveTo(-22, 8);
+    cctx.lineTo(22, 8);
+    cctx.bezierCurveTo(22, 22, 14, 26, 0, 26);
+    cctx.bezierCurveTo(-14, 26, -22, 22, -22, 8);
+    cctx.closePath();
+    cctx.fill();
+    cctx.stroke();
+    // Bowl rim ellipse top
+    cctx.fillStyle = '#d4bc8c';
+    cctx.beginPath();
+    cctx.ellipse(0, 8, 22, 4, 0, 0, Math.PI * 2);
+    cctx.fill();
+    cctx.stroke();
+    // Scoop 1 (left, behind)
+    cctx.fillStyle = p.scoop2Color;
+    cctx.beginPath();
+    cctx.arc(-8, 2, 10, 0, Math.PI * 2);
+    cctx.fill();
+    cctx.stroke();
+    // Scoop 2 (right, front)
+    cctx.fillStyle = p.scoopColor;
+    cctx.beginPath();
+    cctx.arc(7, -2, 11, 0, Math.PI * 2);
+    cctx.fill();
+    cctx.stroke();
+    // Cherry on top
+    cctx.fillStyle = '#d94f4f';
+    cctx.beginPath();
+    cctx.arc(2, -14, 3.5, 0, Math.PI * 2);
+    cctx.fill();
+    cctx.stroke();
+    // Cherry stem
+    cctx.strokeStyle = '#69b369';
+    cctx.lineWidth = 1.5;
+    cctx.beginPath();
+    cctx.moveTo(2, -17);
+    cctx.quadraticCurveTo(6, -22, 8, -19);
+    cctx.stroke();
+  }
+
+  function drawPopsicleShape(p) {
+    // Pop body: rounded-top rectangle
+    cctx.fillStyle = p.popColor;
+    cctx.beginPath();
+    cctx.moveTo(-11, 4);
+    cctx.lineTo(-11, -16);
+    cctx.quadraticCurveTo(-11, -26, 0, -26);
+    cctx.quadraticCurveTo(11, -26, 11, -16);
+    cctx.lineTo(11, 4);
+    cctx.closePath();
+    cctx.fill();
+    cctx.stroke();
+    // Highlight stripe
+    cctx.save();
+    cctx.strokeStyle = 'rgba(255,255,255,0.45)';
+    cctx.lineWidth = 2.5;
+    cctx.beginPath();
+    cctx.moveTo(-6, -18);
+    cctx.lineTo(-6, -4);
+    cctx.stroke();
+    cctx.restore();
+    // Stick
+    cctx.fillStyle = '#d2a96b';
+    cctx.beginPath();
+    cctx.rect(-3, 4, 6, 22);
+    cctx.fill();
+    cctx.stroke();
   }
 
   function launchConfetti() {
@@ -831,21 +969,21 @@
       cctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
       cctx.restore();
     }
-    for (let i = coneParticles.length - 1; i >= 0; i--) {
-      const p = coneParticles[i];
-      p.vy += 0.18;
+    for (let i = treatParticles.length - 1; i >= 0; i--) {
+      const p = treatParticles[i];
+      p.vy += 0.09;
       p.wob += p.wobSpeed;
-      p.x += p.vx + Math.sin(p.wob) * 0.6;
+      p.x += p.vx + Math.sin(p.wob) * 0.5;
       p.y += p.vy;
       p.rot += p.vRot;
       p.life += 1;
-      if (p.y > confettiCanvas.height + 80) {
-        coneParticles.splice(i, 1);
+      if (p.y > confettiCanvas.height + 120) {
+        treatParticles.splice(i, 1);
         continue;
       }
-      drawConeParticle(p);
+      drawTreatParticle(p);
     }
-    if (confettiParticles.length > 0 || coneParticles.length > 0) {
+    if (confettiParticles.length > 0 || treatParticles.length > 0) {
       requestAnimationFrame(stepConfetti);
     } else {
       confettiAnimating = false;
