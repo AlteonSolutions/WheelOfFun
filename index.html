@@ -221,14 +221,17 @@
 (function () {
   'use strict';
 
-  // ---------- Fixed slices ----------
+  // ---------- Fixed slices (Carnival palette) ----------
   const SLICES = [
-    { name: 'Fun Drink',  weight: 3, color: '#4dd4d4', icon: 'drink'  },
-    { name: 'Fun Snack',  weight: 3, color: '#ec7547', icon: 'snack'  },
-    { name: 'Fun Candy',  weight: 3, color: '#d97acc', icon: 'candy'  },
-    { name: 'Movie Time', weight: 3, color: '#a36ad9', icon: 'movie'  },
+    { name: 'Fun Drink',  weight: 3, color: '#d94f4f', icon: 'drink'  }, // red
+    { name: 'Fun Snack',  weight: 3, color: '#f4ead8', icon: 'snack'  }, // cream
+    { name: 'Fun Candy',  weight: 3, color: '#5b9bd5', icon: 'candy'  }, // blue
+    { name: 'Movie Time', weight: 3, color: '#ffd84d', icon: 'movie'  }, // yellow
     { name: 'Ice Cream',  weight: 1, color: null,      icon: 'icecream', golden: true }
   ];
+
+  // Lightbulb chase: full marquee swap every this many ms
+  const BULB_CYCLE_MS = 250;
 
   // ---------- Canvas ----------
   const canvas = document.querySelector('.wheel');
@@ -437,7 +440,7 @@
       // Slightly smaller on the narrow ice-cream slice so it still fits
       const scale = sliceAngle < 0.7 ? 1.15 : 1.5;
       ctx.scale(scale, scale);
-      ctx.strokeStyle = s.golden ? '#5a4515' : '#f4ead8';
+      ctx.strokeStyle = s.golden ? '#5a4515' : '#1a1410';
       drawIcon(s.icon);
       ctx.restore();
 
@@ -446,40 +449,66 @@
 
     ctx.restore();
 
-    // Static outer rings (chrome + dashed road line)
+    // Carnival rim + animated chase lightbulbs (static; do not rotate with wheel)
     ctx.save();
     ctx.translate(cx, cy);
 
+    // Inner gold rim
     ctx.beginPath();
     ctx.arc(0, 0, R, 0, Math.PI * 2);
-    ctx.strokeStyle = '#4dd4d4';
-    ctx.lineWidth = 8;
-    ctx.shadowColor = '#4dd4d4';
-    ctx.shadowBlur = 14;
+    ctx.strokeStyle = '#c9a23a';
+    ctx.lineWidth = 6;
     ctx.stroke();
-    ctx.shadowBlur = 0;
 
-    ctx.beginPath();
-    ctx.arc(0, 0, R + 11, 0, Math.PI * 2);
-    ctx.setLineDash([14, 10]);
-    ctx.strokeStyle = '#ffd84d';
-    ctx.lineWidth = 3;
-    ctx.stroke();
-    ctx.setLineDash([]);
+    // Animated marquee bulbs: alternating lit/dim, pattern swaps each cycle
+    const BULB_N = 24;
+    const BULB_R_CENTER = R + 18;
+    const BULB_R_SIZE = 9;
+    const step = Math.floor(performance.now() / BULB_CYCLE_MS);
+    for (let i = 0; i < BULB_N; i++) {
+      const ang = (i / BULB_N) * Math.PI * 2;
+      const bx = Math.cos(ang) * BULB_R_CENTER;
+      const by = Math.sin(ang) * BULB_R_CENTER;
+      const lit = ((i + step) % 2) === 0;
+      if (lit) {
+        // Glowing lit bulb
+        ctx.beginPath();
+        ctx.arc(bx, by, BULB_R_SIZE, 0, Math.PI * 2);
+        ctx.fillStyle = '#fff5d6';
+        ctx.shadowColor = '#ffd84d';
+        ctx.shadowBlur = 22;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        // Bright hot core
+        ctx.beginPath();
+        ctx.arc(bx, by, BULB_R_SIZE * 0.42, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+      } else {
+        // Dim unlit bulb
+        ctx.beginPath();
+        ctx.arc(bx, by, BULB_R_SIZE, 0, Math.PI * 2);
+        ctx.fillStyle = '#3a2810';
+        ctx.fill();
+        ctx.strokeStyle = '#1a1410';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
+    }
 
-    // Center hub
+    // Center hub: red dome with gold star
     ctx.beginPath();
     ctx.arc(0, 0, 44, 0, Math.PI * 2);
-    const hubGrad = ctx.createRadialGradient(0, 0, 4, 0, 0, 44);
-    hubGrad.addColorStop(0, '#ffd84d');
-    hubGrad.addColorStop(1, '#b8902a');
+    const hubGrad = ctx.createRadialGradient(-12, -12, 6, 0, 0, 44);
+    hubGrad.addColorStop(0, '#ff7a7a');
+    hubGrad.addColorStop(1, '#a01818');
     ctx.fillStyle = hubGrad;
     ctx.fill();
-    ctx.strokeStyle = '#1a1410';
+    ctx.strokeStyle = '#c9a23a';
     ctx.lineWidth = 3;
     ctx.stroke();
 
-    ctx.fillStyle = '#1a1410';
+    ctx.fillStyle = '#ffd84d';
     ctx.font = 'bold 40px Impact, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
@@ -1011,6 +1040,10 @@
   // ---------- Init ----------
   document.getElementById('spinBtn').addEventListener('click', spin);
   drawWheel();
+  // Drive the marquee bulb chase: redraw the wheel every cycle so the
+  // alternating pattern flips. During a spin the spin's own rAF redraws
+  // at 60fps and this interval is harmless overlap.
+  setInterval(() => { if (!spinning) drawWheel(); }, BULB_CYCLE_MS);
 })();
 </script>
 </body>
