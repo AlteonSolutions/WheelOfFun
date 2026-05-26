@@ -217,7 +217,7 @@
 <main>
   <div class="wheel-wrap">
     <div class="pointer"></div>
-    <canvas class="wheel" width="600" height="600"></canvas>
+    <canvas class="wheel" width="720" height="720"></canvas>
   </div>
 
   <div class="controls">
@@ -407,8 +407,9 @@
   function drawWheel() {
     const W = canvas.width, H = canvas.height;
     const cx = W / 2, cy = H / 2;
-    // Leave room outside R for the carnival bulb ring (R + 20 ± 11)
-    const R = Math.min(W, H) / 2 - 36;
+    // Leave room outside R for the carnival bulb ring (R + 20 ± 11) plus the
+    // glow (shadowBlur 22) so lit bulbs aren't clipped at the cardinal points.
+    const R = Math.min(W, H) / 2 - 56;
 
     ctx.clearRect(0, 0, W, H);
 
