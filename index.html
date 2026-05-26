@@ -89,8 +89,7 @@
 
   .wheel-wrap {
     position: relative;
-    width: 92vw;
-    max-width: 520px;
+    width: min(94vw, 78vh, 660px);
     margin: 6px auto 18px;
   }
   .wheel-wrap::after {
@@ -183,6 +182,20 @@
     0%   { box-shadow: 0 0 0 rgba(255, 216, 77, 0); }
     50%  { box-shadow: 0 0 60px rgba(255, 216, 77, 0.9); }
     100% { box-shadow: 0 0 28px rgba(255, 216, 77, 0.4); }
+  }
+
+  /* Kindle Fire HD 10" and larger tablets: more breathing room + bigger type */
+  @media (min-width: 700px) {
+    header { padding: 36px 18px 8px; }
+    .title { font-size: 72px; letter-spacing: 7px; }
+    .subtitle { font-size: 17px; letter-spacing: 8px; margin-top: 8px; }
+    .wheel-wrap { margin: 18px auto 22px; }
+    .spin-btn { font-size: 40px; padding: 24px 78px; letter-spacing: 10px; }
+    .result { max-width: 660px; padding: 22px 22px; }
+    .result-label { font-size: 15px; letter-spacing: 5px; }
+    .result-text { font-size: 34px; }
+    .result.golden .result-text { font-size: 48px; }
+    .pointer { border-left-width: 22px; border-right-width: 22px; border-top-width: 42px; margin-left: -22px; top: -8px; }
   }
 
   @media (max-width: 600px) {
@@ -394,7 +407,8 @@
   function drawWheel() {
     const W = canvas.width, H = canvas.height;
     const cx = W / 2, cy = H / 2;
-    const R = Math.min(W, H) / 2 - 14;
+    // Leave room outside R for the carnival bulb ring (R + 20 ± 11)
+    const R = Math.min(W, H) / 2 - 36;
 
     ctx.clearRect(0, 0, W, H);
 
@@ -462,8 +476,8 @@
 
     // Animated marquee bulbs: alternating lit/dim, pattern swaps each cycle
     const BULB_N = 24;
-    const BULB_R_CENTER = R + 18;
-    const BULB_R_SIZE = 9;
+    const BULB_R_CENTER = R + 20;
+    const BULB_R_SIZE = 11;
     const step = Math.floor(performance.now() / BULB_CYCLE_MS);
     for (let i = 0; i < BULB_N; i++) {
       const ang = (i / BULB_N) * Math.PI * 2;
