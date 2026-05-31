@@ -1,0 +1,31 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.alteonsolutions.wheeloffun'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.alteonsolutions.wheeloffun"
+        minSdk 21       // Android 5.0 — covers all current Kindle Fires (Fire OS 5+)
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        debug {
+            // Debug keystore auto-generated; APK installs fine after enabling
+            // "Apps from Unknown Sources" on Kindle.
+        }
+        release {
+            minifyEnabled false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}

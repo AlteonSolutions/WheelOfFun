@@ -1,0 +1,62 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:        # Manual trigger from the Actions tab
+  push:
+    branches:
+      - claude/wheel-of-fun-app-0qahk
+      - main
+    paths:
+      - 'index.html'
+      - 'android/**'
+      - '.github/workflows/build-apk.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Sync index.html into Android assets
+        # Keep the APK's bundled HTML in lockstep with the repo root.
+        run: |
+          mkdir -p android/app/src/main/assets
+          cp index.html android/app/src/main/assets/index.html
+          echo "Bundled index.html size: $(stat -c %s android/app/src/main/assets/index.html) bytes"
+
+      - name: Generate Gradle wrapper
+        working-directory: android
+        run: |
+          gradle wrapper --gradle-version 8.7 --distribution-type bin
+          chmod +x gradlew
+
+      - name: Build debug APK
+        working-directory: android
+        run: ./gradlew :app:assembleDebug --no-daemon --stacktrace
+
+      - name: Locate APK
+        id: locate
+        run: |
+          APK=$(find android/app/build/outputs/apk -name "*.apk" | head -1)
+          echo "Built APK: $APK"
+          echo "apk_path=$APK" >> $GITHUB_OUTPUT
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheel-of-fun-debug-apk
+          path: ${{ steps.locate.outputs.apk_path }}
+          if-no-files-found: error
+          retention-days: 30
