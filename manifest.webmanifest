@@ -1,0 +1,16 @@
+{
+  "name": "Wheel of Fun",
+  "short_name": "Wheel of Fun",
+  "description": "Road-trip prize wheel — spin for a fun drink, snack, candy, or movie time. Secret ice-cream trigger for the operator.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0d0907",
+  "theme_color": "#0d0907",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

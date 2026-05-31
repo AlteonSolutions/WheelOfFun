@@ -8,6 +8,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0d0907">
 <title>Wheel of Fun</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
 <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='30' fill='%23ffd84d' stroke='%234dd4d4' stroke-width='4'/><text x='32' y='44' font-size='38' text-anchor='middle' font-family='Arial Black,sans-serif' fill='%231a1410'>%E2%98%85</text></svg>">
 <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='30' fill='%23ffd84d' stroke='%234dd4d4' stroke-width='4'/><text x='32' y='44' font-size='38' text-anchor='middle' font-family='Arial Black,sans-serif' fill='%231a1410'>%E2%98%85</text></svg>">
 <style>
@@ -1059,6 +1062,15 @@
   // alternating pattern flips. During a spin the spin's own rAF redraws
   // at 60fps and this interval is harmless overlap.
   setInterval(() => { if (!spinning) drawWheel(); }, BULB_CYCLE_MS);
+
+  // ---------- Service worker registration ----------
+  // Caches the entire app on first visit so the Kindle Fire (or any device)
+  // can launch this fully offline forever after.
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(() => { /* ignore */ });
+    });
+  }
 })();
 </script>
 </body>
