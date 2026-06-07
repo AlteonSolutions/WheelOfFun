@@ -135,9 +135,36 @@
       0 0 28px rgba(255, 94, 126, 0.6),
       inset 0 -4px 0 rgba(0,0,0,0.3);
     text-shadow: 2px 2px 0 rgba(0,0,0,0.4);
+    position: relative;
+    overflow: hidden;
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
+    transition: transform 0.08s linear, box-shadow 0.08s linear;
+  }
+  /* Power bar that fills along the bottom as the user holds */
+  .spin-btn::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 9px;
+    background: linear-gradient(90deg, #4dd4d4 0%, #ffd84d 55%, #ff5e7e 100%);
+    transform: scaleX(var(--power, 0));
+    transform-origin: left center;
+    transition: transform 0.05s linear;
+    pointer-events: none;
+    opacity: 0;
+  }
+  .spin-btn.charging::after { opacity: 1; }
+  .spin-btn.charging {
+    box-shadow:
+      0 0 calc(28px + var(--power, 0) * 60px) rgba(255, 216, 77, calc(0.35 + var(--power, 0) * 0.55)),
+      0 0 22px rgba(255, 94, 126, 0.5),
+      inset 0 -4px 0 rgba(0,0,0,0.3);
+    transform: scale(calc(1 + var(--power, 0) * 0.06));
   }
   .spin-btn:disabled { opacity: 0.45; cursor: not-allowed; }
-  .spin-btn:active:not(:disabled) { transform: translateY(2px); }
+  .spin-btn:active:not(:disabled):not(.charging) { transform: translateY(2px); }
 
   .result {
     margin: 18px auto 0;
@@ -578,7 +605,10 @@
     return SLICES.length - 1;
   }
 
-  function spin() {
+  // Alternator so successive teases don't repeat the same side
+  let teaseAlternator = false;
+
+  function spin(holdMs) {
     if (spinning) return;
     unlockAudio();
     spinning = true;
@@ -589,18 +619,32 @@
     resultEl.querySelector('.result-text').textContent = '…';
 
     const goldenIdx = SLICES.findIndex(s => s.golden);
-    // Slice that arrives at pointer immediately *after* the golden one — its
-    // ice-cream-adjacent edge gives the natural "so close!" tease.
-    const teaseIdx = (goldenIdx - 1 + SLICES.length) % SLICES.length;
+    // Two geometric tease patterns (both end with the wheel near ice cream):
+    //   "so-close":  land on the slice that arrives just AFTER ice cream
+    //                (ice cream visibly passes the pointer right before settling).
+    //                In arrival order that's (goldenIdx - 1) = Movie.
+    //   "just-shy":  land on the slice that arrives just BEFORE ice cream
+    //                (wheel decelerates approaching ice cream and stops shy).
+    //                In arrival order that's (goldenIdx + 1) = Drink.
+    const soCloseIdx = (goldenIdx - 1 + SLICES.length) % SLICES.length;
+    const justShyIdx = (goldenIdx + 1) % SLICES.length;
 
-    let targetIdx, teasing = false;
+    let targetIdx, teasing = false, teaseEdgeSign = 0;
     if (forceGolden) {
       targetIdx = goldenIdx;
       forceGolden = false;
-    } else if (spinCount % 2 === 0) {
-      // Every other spin is a tease: force the tease slice + edge bias.
-      targetIdx = teaseIdx;
+    } else if (Math.random() < 0.25) {
+      // ~25% of spins are tease spins, alternating between the two styles
+      // so the kid sees both "ice cream just left" and "almost reached it".
       teasing = true;
+      if (teaseAlternator) {
+        targetIdx = soCloseIdx;
+        teaseEdgeSign = +1; // ice-cream-adjacent edge is the HIGH end of Movie
+      } else {
+        targetIdx = justShyIdx;
+        teaseEdgeSign = -1; // ice-cream-adjacent edge is the LOW end of Drink
+      }
+      teaseAlternator = !teaseAlternator;
     } else {
       targetIdx = pickIndex();
     }
@@ -612,21 +656,29 @@
 
     let jitter;
     if (teasing) {
-      jitter = sliceAngle * 0.45;
+      jitter = teaseEdgeSign * sliceAngle * 0.45;
     } else {
       jitter = (Math.random() - 0.5) * sliceAngle * 0.7;
     }
 
+    // Hold-and-release power: longer hold = more dramatic spin.
+    // OUTCOME is unchanged — power only affects duration + turns so the
+    // player feels they have control, while the actual prize was already
+    // chosen above. Min hold = quick weak spin, max = long dramatic spin.
+    const power = Math.max(0.2, Math.min(1, (holdMs || 0) / 1500));
+
     const startRot = rotation;
     const desiredFinal = -(sliceMid + jitter);
-    const baseTurns = teasing ? 7 : 6;
-    const turns = baseTurns + Math.floor(Math.random() * 3);
+    const baseTurns = 4 + Math.round(6 * power);   // 4 → 10 full turns
+    const turns = (teasing ? baseTurns + 1 : baseTurns);
     let targetRot = desiredFinal;
     while (targetRot - startRot < turns * Math.PI * 2) {
       targetRot += Math.PI * 2;
     }
 
-    const duration = teasing ? 8500 : 6500;
+    // Base 5000–9100ms by power; tease adds extra time for the slow finish.
+    const baseDuration = 6500 * (0.55 + 0.85 * power);
+    const duration = teasing ? baseDuration + 1500 : baseDuration;
     const t0 = performance.now();
     let lastIdx = currentSliceIndex();
 
@@ -1055,8 +1107,57 @@
   }
   subtitle.addEventListener('click', onSecretTap);
 
+  // ---------- Spin button: hold-and-release power ----------
+  // Press to start charging, release to spin. Hold duration -> spin power
+  // (drama only — the outcome was decided up front and isn't affected).
+  // Visual feedback: power bar at bottom of button fills, glow intensifies,
+  // button scales up slightly. Caps at 1500ms hold.
+  const spinBtn = document.getElementById('spinBtn');
+  const MAX_HOLD_MS = 1500;
+  let holding = false;
+  let holdStart = 0;
+
+  function updateChargeViz() {
+    if (!holding) return;
+    const held = performance.now() - holdStart;
+    const power = Math.min(1, held / MAX_HOLD_MS);
+    spinBtn.style.setProperty('--power', String(power));
+    requestAnimationFrame(updateChargeViz);
+  }
+
+  function startHold(e) {
+    if (spinning || spinBtn.disabled) return;
+    if (e && e.preventDefault) e.preventDefault();
+    holding = true;
+    holdStart = performance.now();
+    spinBtn.classList.add('charging');
+    spinBtn.style.setProperty('--power', '0');
+    requestAnimationFrame(updateChargeViz);
+  }
+
+  function endHold(e) {
+    if (!holding) return;
+    if (e && e.preventDefault) e.preventDefault();
+    holding = false;
+    const held = performance.now() - holdStart;
+    spinBtn.classList.remove('charging');
+    spinBtn.style.removeProperty('--power');
+    spin(held);
+  }
+
+  function cancelHold() {
+    if (!holding) return;
+    holding = false;
+    spinBtn.classList.remove('charging');
+    spinBtn.style.removeProperty('--power');
+  }
+
+  spinBtn.addEventListener('pointerdown', startHold);
+  // Listen on window so release anywhere counts (finger can slide off button).
+  window.addEventListener('pointerup', endHold);
+  window.addEventListener('pointercancel', cancelHold);
+
   // ---------- Init ----------
-  document.getElementById('spinBtn').addEventListener('click', spin);
   drawWheel();
   // Drive the marquee bulb chase: redraw the wheel every cycle so the
   // alternating pattern flips. During a spin the spin's own rAF redraws
