@@ -2,6 +2,12 @@ plugins {
     id 'com.android.application'
 }
 
+// versionCode driven by CI so each build is strictly newer than the last.
+// Android refuses to install an APK whose versionCode is lower than the
+// installed one, and silently no-ops when it's equal — GITHUB_RUN_NUMBER
+// increases monotonically per repo. Local builds fall back to 1.
+def buildNumber = (System.getenv("GITHUB_RUN_NUMBER") ?: "1").toInteger()
+
 android {
     namespace 'com.alteonsolutions.wheeloffun'
     compileSdk 34
@@ -10,17 +16,31 @@ android {
         applicationId "com.alteonsolutions.wheeloffun"
         minSdk 21       // Android 5.0 — covers all current Kindle Fires (Fire OS 5+)
         targetSdk 34
-        versionCode 1
-        versionName "1.0"
+        versionCode buildNumber
+        versionName "1.0.${buildNumber}"
+    }
+
+    signingConfigs {
+        // Fixed keystore committed to the repo, used for every build (debug + release).
+        // Overriding the *debug* signing config is load-bearing: assembleDebug would
+        // otherwise auto-generate ~/.android/debug.keystore, which on CI is a fresh
+        // file per run — leading to "App not installed as package conflicts with an
+        // existing package" on every phone upgrade. See the signing trap.
+        debug {
+            storeFile rootProject.file("keystore/wheeloffun.keystore")
+            storePassword "wheeloffundebug"
+            keyAlias "wheeloffun"
+            keyPassword "wheeloffundebug"
+        }
     }
 
     buildTypes {
         debug {
-            // Debug keystore auto-generated; APK installs fine after enabling
-            // "Apps from Unknown Sources" on Kindle.
+            // signingConfig auto-picked from signingConfigs.debug above
         }
         release {
             minifyEnabled false
+            signingConfig signingConfigs.debug
         }
     }
 

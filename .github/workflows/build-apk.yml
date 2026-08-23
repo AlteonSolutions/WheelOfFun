@@ -1,24 +1,31 @@
-name: Build Android APK
+name: Build APK
+
+# Push → about three minutes later the APK exists in two places:
+#   1. Committed at dist/WheelOfFun-debug.apk (git pull on the phone, tap file, install).
+#   2. Attached to a rolling `latest` GitHub Release (GH mobile app downloads it directly).
+# Both exist because they fail in different places. The release is the one that usually gets used.
 
 on:
-  workflow_dispatch:        # Manual trigger from the Actions tab
   push:
-    branches:
-      - claude/wheel-of-fun-app-0qahk
-      - main
-    paths:
-      - 'index.html'
-      - 'android/**'
-      - '.github/workflows/build-apk.yml'
+    branches: ['**']
+    paths-ignore:
+      - 'dist/**'      # APK-only pushes must not re-trigger this workflow
+      - 'README.md'
+  workflow_dispatch:
+
+permissions:
+  contents: write      # commit-back and release creation both need write
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          # Check out the branch tip (not the detached commit) so the push at
+          # the end has somewhere to land.
+          ref: ${{ github.ref_name }}
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -28,35 +35,62 @@ jobs:
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools platforms;android-34 build-tools;34.0.0'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
 
       - name: Sync index.html into Android assets
         # Keep the APK's bundled HTML in lockstep with the repo root.
         run: |
           mkdir -p android/app/src/main/assets
           cp index.html android/app/src/main/assets/index.html
-          echo "Bundled index.html size: $(stat -c %s android/app/src/main/assets/index.html) bytes"
 
-      - name: Generate Gradle wrapper
+      - name: Generate Gradle wrapper if missing
         working-directory: android
         run: |
-          gradle wrapper --gradle-version 8.7 --distribution-type bin
+          if [ ! -f gradlew ]; then
+            gradle wrapper --gradle-version 8.7 --distribution-type bin
+          fi
           chmod +x gradlew
 
       - name: Build debug APK
         working-directory: android
-        run: ./gradlew :app:assembleDebug --no-daemon --stacktrace
+        run: ./gradlew --no-daemon assembleDebug
 
-      - name: Locate APK
-        id: locate
+      - name: Commit APK to the branch
         run: |
-          APK=$(find android/app/build/outputs/apk -name "*.apk" | head -1)
-          echo "Built APK: $APK"
-          echo "apk_path=$APK" >> $GITHUB_OUTPUT
+          set -euo pipefail
+          mkdir -p dist
+          cp android/app/build/outputs/apk/debug/app-debug.apk dist/WheelOfFun-debug.apk
 
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: wheel-of-fun-debug-apk
-          path: ${{ steps.locate.outputs.apk_path }}
-          if-no-files-found: error
-          retention-days: 30
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f dist/WheelOfFun-debug.apk
+
+          # A byte-identical APK produces no commit — one of three brakes on
+          # the build loop (also: paths-ignore above, and [skip ci] below).
+          if git diff --cached --quiet; then
+            echo "APK unchanged — nothing to commit."
+            exit 0
+          fi
+
+          git commit -m "Build debug APK from ${GITHUB_SHA:0:7} [skip ci]"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+
+      # A rolling `latest` release, because the GitHub mobile app downloads
+      # release assets directly instead of handing binaries off to a browser.
+      - name: Publish latest release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          # --cleanup-tag also drops the `latest` tag so the next run's
+          # `gh release create latest` doesn't fail on a surviving tag.
+          # `|| true` lets the very first run succeed with no release yet.
+          gh release delete latest --yes --cleanup-tag || true
+          gh release create latest dist/WheelOfFun-debug.apk \
+            --target "$GITHUB_SHA" \
+            --title "WheelOfFun — latest debug build" \
+            --notes "Built from \`${GITHUB_SHA:0:7}\` on \`${GITHUB_REF_NAME}\`."
